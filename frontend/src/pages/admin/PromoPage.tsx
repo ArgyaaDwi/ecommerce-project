@@ -360,9 +360,9 @@ export default function PromoPage() {
           <div className="w-full max-w-lg rounded-2xl bg-white shadow-xl">
             <div className="flex items-center justify-between border-b border-gray-200 px-5 py-4">
               <div>
-                <h2 className="text-lg font-semibold text-gray-900">
+                <p className="text-lg font-semibold text-gray-900">
                   Edit Promo
-                </h2>
+                </p>
                 <p className="text-sm text-gray-500">
                   {editingPromo.productName}
                 </p>
@@ -441,7 +441,7 @@ export default function PromoPage() {
                 onClick={handleSave}
                 className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
               >
-                Save Changes
+                Simpan
               </button>
             </div>
           </div>
