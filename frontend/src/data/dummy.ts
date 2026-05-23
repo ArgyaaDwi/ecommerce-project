@@ -140,3 +140,25 @@ export const dummyPromos: Promo[] = [
     status: "active",
   },
 ];
+
+// Helpers to persist promos to localStorage so different pages can share changes during development
+const PROMO_STORAGE_KEY = "promos";
+
+export function loadPromosFromStorage(): Promo[] {
+  try {
+    const raw = localStorage.getItem(PROMO_STORAGE_KEY);
+    if (!raw) return [...dummyPromos];
+    const parsed = JSON.parse(raw) as Promo[];
+    return parsed;
+  } catch (e) {
+    return [...dummyPromos];
+  }
+}
+
+export function savePromosToStorage(promos: Promo[]) {
+  try {
+    localStorage.setItem(PROMO_STORAGE_KEY, JSON.stringify(promos));
+  } catch (e) {
+    // ignore
+  }
+}

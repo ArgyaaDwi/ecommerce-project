@@ -9,7 +9,15 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import type { SortingState } from "@tanstack/react-table";
-import { ChevronDown, ChevronUp, Pencil, Search, Trash2 } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronUp,
+  Pencil,
+  Search,
+  Trash2,
+  Plus,
+  X,
+} from "lucide-react";
 import Breadcrumb from "@/components/fragment/Breadcrumb";
 import type { Product } from "@/data/dummy";
 import { dummyProducts } from "@/data/dummy";
@@ -53,6 +61,13 @@ export default function ProductPage() {
         cell: (info) => (
           <div className="flex gap-2">
             <button
+              onClick={() => handleCreatePromoClick(info.row.original)}
+              className="inline-flex items-center gap-1 px-3 py-1 bg-green-100 text-green-700 hover:bg-green-200 rounded text-sm font-medium transition"
+            >
+              <Plus size={14} />
+              <span>Promo</span>
+            </button>
+            <button
               onClick={() => handleEdit(info.row.original.id)}
               className="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-700 hover:bg-blue-200 rounded text-sm font-medium transition"
             >
@@ -92,6 +107,38 @@ export default function ProductPage() {
 
   const handleDelete = (id: number) => {
     console.log(`Delete product ID: ${id}`);
+  };
+
+  const [promoModalOpen, setPromoModalOpen] = useState(false);
+  const [promoForm, setPromoForm] = useState({
+    price: "",
+    description: "",
+    status: "active" as "active" | "inactive",
+  });
+  const [promoProduct, setPromoProduct] = useState<Product | null>(null);
+
+  const handleCreatePromoClick = (product: Product) => {
+    setPromoProduct(product);
+    setPromoForm({
+      price: String(product.price),
+      description: "",
+      status: "active",
+    });
+    setPromoModalOpen(true);
+  };
+
+  const handleCreatePromoSave = () => {
+    if (!promoProduct) return;
+    const newPromo = {
+      id: Math.floor(Math.random() * 1000000),
+      productName: promoProduct.name,
+      price: Number(promoForm.price),
+      description: promoForm.description,
+      status: promoForm.status,
+    };
+    setPromoModalOpen(false);
+    setPromoProduct(null);
+    console.log("Created promo:", newPromo);
   };
 
   const rows = table.getRowModel().rows;
@@ -293,6 +340,91 @@ export default function ProductPage() {
           results
         </div>
       </div>
+
+      {promoModalOpen && promoProduct && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+          <div className="w-full max-w-lg rounded-2xl bg-white shadow-xl">
+            <div className="flex items-center justify-between border-b border-gray-200 px-5 py-4">
+              <div>
+                <p className="text-lg font-semibold text-gray-900">
+                  Create Promo
+                </p>
+                <p className="text-sm text-gray-500">{promoProduct.name}</p>
+              </div>
+              <button
+                onClick={() => setPromoModalOpen(false)}
+                className="rounded-full p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <div className="space-y-4 px-5 py-5">
+              <div>
+                <label className="mb-2 block text-sm font-medium text-gray-700">
+                  Harga
+                </label>
+                <input
+                  type="number"
+                  value={promoForm.price}
+                  onChange={(e) =>
+                    setPromoForm((c) => ({ ...c, price: e.target.value }))
+                  }
+                  className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-blue-500"
+                />
+              </div>
+
+              <div>
+                <label className="mb-2 block text-sm font-medium text-gray-700">
+                  Deskripsi
+                </label>
+                <textarea
+                  value={promoForm.description}
+                  onChange={(e) =>
+                    setPromoForm((c) => ({ ...c, description: e.target.value }))
+                  }
+                  rows={4}
+                  className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-blue-500"
+                />
+              </div>
+
+              <div>
+                <label className="mb-2 block text-sm font-medium text-gray-700">
+                  Status
+                </label>
+                <select
+                  value={promoForm.status}
+                  onChange={(e) =>
+                    setPromoForm((c) => ({
+                      ...c,
+                      status: e.target.value as "active" | "inactive",
+                    }))
+                  }
+                  className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-blue-500"
+                >
+                  <option value="active">Active</option>
+                  <option value="inactive">Inactive</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-end gap-3 border-t border-gray-200 px-5 py-4">
+              <button
+                onClick={() => setPromoModalOpen(false)}
+                className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleCreatePromoSave}
+                className="rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700"
+              >
+                Simpan Promo
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
