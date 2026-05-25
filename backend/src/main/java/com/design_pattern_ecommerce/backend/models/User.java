@@ -27,8 +27,8 @@ public class User {
     @Column(name = "session_key")
     private String sessionKey;
 
-    @Column(name = "product_preference")
-    private String productPreference;
+    @Column(name = "product_preference_type")
+    private String productPreferenceType;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
@@ -73,12 +73,12 @@ public class User {
         this.sessionKey = sessionKey;
     }
 
-    public String getProductPreference() {
-        return productPreference;
+    public String getProductPreferenceType() {
+        return productPreferenceType;
     }
 
-    public void setProductPreference(String productPreference) {
-        this.productPreference = productPreference;
+    public void setProductPreferenceType(String productPreferenceType) {
+        this.productPreferenceType = productPreferenceType;
     }
 
     public LocalDateTime getCreatedAt() {

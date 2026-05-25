@@ -6,6 +6,8 @@ import com.design_pattern_ecommerce.backend.services.UserService;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,14 +45,6 @@ public class UserController {
     @PostMapping("/create_session")
     public ResponseEntity<ApiResponse<User>> createSession(@RequestBody CreateSessionRequest request) {
         try {
-            // Validate input
-            if (request.getName() == null || request.getName().trim().isEmpty()) {
-                return new ResponseEntity<>(
-                    new ApiResponse<>(false, "Name is required", null),
-                    HttpStatus.BAD_REQUEST
-                );
-            }
-
             // Call service to create session
             User user = userService.createSession(request.getName());
             
@@ -110,39 +104,23 @@ public class UserController {
      * 
      * Request body:
      * {
-     *   "category_ids": [1, 2, 3]
+     *   "categoryIds": [1, 2, 3]
      * }
      */
     @PostMapping("/set_preference")
-    public ResponseEntity<ApiResponse<User>> setUserPreference(@RequestHeader(value = "Authorization", required = false) String authHeader) {
+    @RequireAuth
+    public ResponseEntity<ApiResponse<User>> setUserPreference(@RequestBody SetUserPreferenceRequest request, HttpServletRequest httpRequest) {
         try {
-            // Validate Authorization header
-            if (authHeader == null || authHeader.isEmpty()) {
+            User user = (User) httpRequest.getAttribute("currentUser");
+            
+            List<Integer> categoryIds = request.getCategoryIds();
+            if (categoryIds == null || categoryIds.isEmpty()) {
                 return new ResponseEntity<>(
-                    new ApiResponse<>(false, "Authorization header is required", null),
-                    HttpStatus.UNAUTHORIZED
+                    new ApiResponse<>(false, "Category IDs cannot be empty", null),
+                    HttpStatus.BAD_REQUEST
                 );
             }
 
-            // Extract session key from "Bearer <session-key>" format
-            String sessionKey = userService.extractSessionKey(authHeader);
-            
-            if (sessionKey == null || sessionKey.isEmpty()) {
-                return new ResponseEntity<>(
-                    new ApiResponse<>(false, "Invalid Authorization header format. Use: Bearer <session-key>", null),
-                    HttpStatus.UNAUTHORIZED
-                );
-            }
-
-            // Find user by session key
-            User user = userService.findBySessionKey(sessionKey);
-            
-            if (user == null) {
-                return new ResponseEntity<>(
-                    new ApiResponse<>(false, "Session not found or expired", null),
-                    HttpStatus.NOT_FOUND
-                );
-            }
 
             return new ResponseEntity<>(
                 new ApiResponse<>(true, "User preference updated successfully", user),
@@ -154,6 +132,21 @@ public class UserController {
                 HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
+    }
+}
+
+class SetUserPreferenceRequest {
+    private List<Integer> categoryIds;
+
+    public SetUserPreferenceRequest() {
+    }
+
+    public List<Integer> getCategoryIds() {
+        return categoryIds;
+    }
+
+    public void setCategoryIds(List<Integer> categoryIds) {
+        this.categoryIds = categoryIds;
     }
 }
 

@@ -3,7 +3,7 @@ CREATE TABLE
         id SERIAL PRIMARY KEY,
         name VARCHAR(255),
         session_key VARCHAR(255),
-        product_preference VARCHAR(255),
+        product_preference_type VARCHAR(255),
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
 
@@ -25,10 +25,10 @@ CREATE TABLE
     user_preferences (
         id SERIAL PRIMARY KEY,
         user_id INTEGER NOT NULL,
-        product_id INTEGER NOT NULL,
+        product_category_id INTEGER NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         CONSTRAINT fk_user_preferences_user FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
-        CONSTRAINT fk_user_preferences_product FOREIGN KEY (product_id) REFERENCES products (id) ON DELETE CASCADE
+        CONSTRAINT fk_user_preferences_product_category FOREIGN KEY (product_category_id) REFERENCES product_categories (id) ON DELETE CASCADE
     );
 
 CREATE TABLE

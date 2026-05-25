@@ -40,10 +40,6 @@ public class Product {
 
     @JsonIgnore
     @OneToMany(mappedBy = "product")
-    private List<UserPreference> userPreferences = new ArrayList<>();
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "product")
     private List<ProductPromotion> promotions = new ArrayList<>();
 
     public Product() {
@@ -89,13 +85,6 @@ public class Product {
         this.createdAt = createdAt;
     }
 
-    public List<UserPreference> getUserPreferences() {
-        return userPreferences;
-    }
-
-    public void setUserPreferences(List<UserPreference> userPreferences) {
-        this.userPreferences = userPreferences;
-    }
 
     public List<ProductPromotion> getPromotions() {
         return promotions;

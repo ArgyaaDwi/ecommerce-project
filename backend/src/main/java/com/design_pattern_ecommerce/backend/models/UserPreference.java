@@ -25,8 +25,8 @@ public class UserPreference {
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "product_id", nullable = false)
-    private Product product;
+    @JoinColumn(name = "product_category_id", nullable = false)
+    private ProductCategory productCategory;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
@@ -51,12 +51,12 @@ public class UserPreference {
         this.user = user;
     }
 
-    public Product getProduct() {
-        return product;
+    public ProductCategory getProductCategory() {
+        return productCategory;
     }
 
-    public void setProduct(Product product) {
-        this.product = product;
+    public void setProductCategory(ProductCategory productCategory) {
+        this.productCategory = productCategory;
     }
 
     public LocalDateTime getCreatedAt() {

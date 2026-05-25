@@ -38,7 +38,7 @@ public class UserService {
         user = userRepository.save(user);
 
         // Set default product preference
-        userPreferenceService.setProductPreference(user.getId(), "default");
+        userPreferenceService.setUserPreferenceType(user.getId(), "default");
 
         return user;
     }
