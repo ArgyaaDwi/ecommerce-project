@@ -84,7 +84,7 @@ export const dummyProducts: Product[] = [
     id: 2,
     name: "Adidas Running Shoes",
     category: "Sports",
-    status: "active",
+    price: 1299000,
     createdAt: "2024-01-11",
   },
   {
