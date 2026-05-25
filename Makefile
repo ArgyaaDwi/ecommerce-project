@@ -1,5 +1,5 @@
 api:
-	cd backend && ./gradlew bootRun
+	cd backend && export $$(cat ../.env | xargs) && ./gradlew bootRun
 
 client:
 	cd frontend && npm start
@@ -13,6 +13,9 @@ all:
 
 down:
 	docker compose -f docker-compose.yml --env-file .env down
+
+stop:
+	docker compose -f docker-compose.yml --env-file .env stop
 
 migrate:
 	cd backend && ./gradlew flywayMigrate
