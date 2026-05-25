@@ -1,8 +1,9 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
 @import "tailwindcss";
 
 @theme {
   /* Warna brand */
-  --color-primary: #6366F1;
+  --color-primary: #1591DC;
   --color-primary-foreground: #FFFFFF;
   --color-secondary: #F1F5F9;
   --color-secondary-foreground: #0F172A;
@@ -14,6 +15,7 @@
   --color-border: #E2E8F0;
   --color-background: #FFFFFF;
   --color-foreground: #0F172A;
+  --color-backgroundAdmin: #f7f9fa;
   --radius: 0.5rem;
   --font-sans: 'Poppins', ui-sans-serif, system-ui;
 }
@@ -31,13 +33,13 @@
   --shadow:
     rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
+  --sans: 'Poppins', system-ui, sans-serif;
+  --heading: 'Poppins', system-ui, sans-serif;
   --mono: ui-monospace, Consolas, monospace;
 
   font: 18px/145% var(--sans);
   letter-spacing: 0.18px;
-  color-scheme: light dark;
+  color-scheme: light;
   color: var(--text);
   background: var(--bg);
   font-synthesis: none;
@@ -70,20 +72,21 @@
   }
 }
 
+html,
+body,
 #root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
+  min-height: 100%;
+}
+
+#root {
+  width: 100%;
   min-height: 100svh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
 }
 
 body {
   margin: 0;
+  min-height: 100svh;
+  background: var(--bg);
 }
 
 h1,
