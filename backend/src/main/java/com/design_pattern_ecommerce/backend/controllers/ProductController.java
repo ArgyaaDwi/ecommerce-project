@@ -1,0 +1,90 @@
+package com.design_pattern_ecommerce.backend.controllers;
+
+import com.design_pattern_ecommerce.backend.annotations.RequireAuth;
+import com.design_pattern_ecommerce.backend.models.Product;
+import com.design_pattern_ecommerce.backend.models.ProductCategory;
+import com.design_pattern_ecommerce.backend.repositories.ProductCategoryRepository;
+import com.design_pattern_ecommerce.backend.services.ProductService;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import java.util.List;
+
+
+@RestController
+@RequestMapping("/product")
+@CrossOrigin(origins = "*")
+public class ProductController {
+
+    @Autowired
+    private ProductService productService;
+    @Autowired
+    private ProductCategoryRepository productCategoryRepository;
+    
+    
+    // get all product
+    @GetMapping("/list")
+    @RequireAuth
+    public ResponseEntity<ApiResponse<List<Product>>> getAllProducts() {
+        try {
+            List<Product> products = productService.getAllProducts();
+            return new ResponseEntity<>(
+                new ApiResponse<>(true, "Products retrieved successfully", products),
+                HttpStatus.OK
+            );
+        } catch (Exception e) {
+            return new ResponseEntity<>(
+                new ApiResponse<>(false, "Failed to retrieve products: " + e.getMessage(), null),
+                HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
+    }
+
+    // get product category
+    @GetMapping("/category/list")
+    @RequireAuth
+    public ResponseEntity<ApiResponse<List<ProductCategory>>> getAllCategories() {
+        try {
+            List<ProductCategory> categories = productCategoryRepository.findAll();
+
+            return new ResponseEntity<>(
+                new ApiResponse<>(true, "Categories retrieved successfully", categories),
+                HttpStatus.OK
+            );
+        } catch (Exception e) {
+            return new ResponseEntity<>(
+                new ApiResponse<>(false, "Failed to retrieve categories: " + e.getMessage(), null),
+                HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
+    }
+
+    // get product by category id
+    @GetMapping("/category/{categoryId}")
+    @RequireAuth
+    public ResponseEntity<ApiResponse<List<Product>>> getProductsByCategoryId(@PathVariable Long categoryId) {
+        try {
+            List<Product> products = productService.getProductsByCategoryId(categoryId);
+
+            if (products.isEmpty()) {
+                return new ResponseEntity<>(
+                    new ApiResponse<>(false, "No products found for category ID: " + categoryId, null),
+                    HttpStatus.NOT_FOUND
+                );
+            }
+            return new ResponseEntity<>(
+                new ApiResponse<>(true, "Products retrieved successfully", products),
+                HttpStatus.OK
+            );
+        } catch (Exception e) {
+            return new ResponseEntity<>(
+                new ApiResponse<>(false, "Failed to retrieve products: " + e.getMessage(), null),
+                HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
+    }
+
+
+}
