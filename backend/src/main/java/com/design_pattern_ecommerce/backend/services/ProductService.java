@@ -22,7 +22,10 @@ public class ProductService {
         return productRepository.findByCategoryId(categoryId);
     }
 
-    public List<Product> getProductsByUserPreferences(String preferences) {
+    public List<Product> getProductsByUserPreferences(int userId) {
+
+        // todo call display strategy based on user preferences
+
         return null;
     }
 }

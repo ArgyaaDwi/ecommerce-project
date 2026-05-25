@@ -3,8 +3,11 @@ package com.design_pattern_ecommerce.backend.controllers;
 import com.design_pattern_ecommerce.backend.annotations.RequireAuth;
 import com.design_pattern_ecommerce.backend.models.Product;
 import com.design_pattern_ecommerce.backend.models.ProductCategory;
+import com.design_pattern_ecommerce.backend.models.User;
 import com.design_pattern_ecommerce.backend.repositories.ProductCategoryRepository;
 import com.design_pattern_ecommerce.backend.services.ProductService;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -86,5 +89,25 @@ public class ProductController {
         }
     }
 
+
+    @GetMapping("/recomendation")
+    @RequireAuth
+    public ResponseEntity<ApiResponse<List<Product>>> getUserProductRecomendations(HttpServletRequest request) {
+        try {
+            User user = (User) request.getAttribute("currentUser");
+            
+            List<Product> products = productService.getProductsByUserPreferences(user.getId());
+
+            return new ResponseEntity<>(
+                new ApiResponse<>(true, "Products retrieved successfully", products),
+                HttpStatus.OK
+            );
+        } catch (Exception e) {
+            return new ResponseEntity<>(
+                new ApiResponse<>(false, "Failed to retrieve products: " + e.getMessage(), null),
+                HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
+    }
 
 }
