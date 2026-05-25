@@ -16,6 +16,8 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private UserPreferenceService userPreferenceService;
 
     /**
      * Create new user session with random session key
@@ -30,12 +32,15 @@ public class UserService {
             validatedName = generateRandomName(); // For demo purposes
         }
 
-        // Generate unique session key
         String sessionKey = generateSessionKey();
 
-        // Create and save user
         User user = new User(validatedName, sessionKey);
-        return userRepository.save(user);
+        user = userRepository.save(user);
+
+        // Set default product preference
+        userPreferenceService.setProductPreference(user.getId(), "default");
+
+        return user;
     }
 
     /**
@@ -70,18 +75,6 @@ public class UserService {
             return authHeader.substring(7);
         }
         return null;
-    }
-
-    /**
-     * Set product preference for user
-     * 
-     * @param user User to update
-     * @param preference Product preference to set
-     * @return Updated user
-     */
-    public User setProductPreference(User user, String preference) {
-        user.setProductPreference(preference);
-        return userRepository.save(user);
     }
 
     // Private helper methods
