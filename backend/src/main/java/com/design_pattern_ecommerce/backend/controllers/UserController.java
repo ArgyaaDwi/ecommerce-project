@@ -1,7 +1,11 @@
 package com.design_pattern_ecommerce.backend.controllers;
 
+import com.design_pattern_ecommerce.backend.annotations.RequireAuth;
 import com.design_pattern_ecommerce.backend.models.User;
 import com.design_pattern_ecommerce.backend.services.UserService;
+
+import jakarta.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -82,35 +86,10 @@ public class UserController {
      * }
      */
     @GetMapping("/get_session")
-    public ResponseEntity<ApiResponse<User>> getSession(@RequestHeader(value = "Authorization", required = false) String authHeader) {
+    @RequireAuth
+    public ResponseEntity<ApiResponse<User>> getSession(HttpServletRequest request) {
         try {
-            // Validate Authorization header
-            if (authHeader == null || authHeader.isEmpty()) {
-                return new ResponseEntity<>(
-                    new ApiResponse<>(false, "Authorization header is required", null),
-                    HttpStatus.UNAUTHORIZED
-                );
-            }
-
-            // Extract session key from "Bearer <session-key>" format
-            String sessionKey = userService.extractSessionKey(authHeader);
-            
-            if (sessionKey == null || sessionKey.isEmpty()) {
-                return new ResponseEntity<>(
-                    new ApiResponse<>(false, "Invalid Authorization header format. Use: Bearer <session-key>", null),
-                    HttpStatus.UNAUTHORIZED
-                );
-            }
-
-            // Find user by session key
-            User user = userService.findBySessionKey(sessionKey);
-            
-            if (user == null) {
-                return new ResponseEntity<>(
-                    new ApiResponse<>(false, "Session not found or expired", null),
-                    HttpStatus.NOT_FOUND
-                );
-            }
+            User user = (User) request.getAttribute("currentUser");
 
             return new ResponseEntity<>(
                 new ApiResponse<>(true, "User retrieved successfully", user),
@@ -123,7 +102,17 @@ public class UserController {
             );
         }
     }
+    
 
+     /**
+     * Create new user session
+     * POST /user/create_session
+     * 
+     * Request body:
+     * {
+     *   "category_ids": [1, 2, 3]
+     * }
+     */
     @PostMapping("/set_preference")
     public ResponseEntity<ApiResponse<User>> setUserPreference(@RequestHeader(value = "Authorization", required = false) String authHeader) {
         try {
@@ -155,7 +144,6 @@ public class UserController {
                 );
             }
 
-            // TODO: Implement preference setting logic
             return new ResponseEntity<>(
                 new ApiResponse<>(true, "User preference updated successfully", user),
                 HttpStatus.OK
