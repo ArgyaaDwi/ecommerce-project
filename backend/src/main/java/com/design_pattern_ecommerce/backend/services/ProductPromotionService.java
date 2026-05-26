@@ -101,5 +101,10 @@ public class ProductPromotionService {
         Product product = productService.getProductById(productId);
         userPromotionRepository.deleteByUserIdAndProductId(userId, product.getId());
     }
+
+
+    public UserPromotion getByProductIdAndUserId(long userId, int productId) {
+        return userPromotionRepository.findByUserIdAndProductId(userId, productId).orElse(null);
+    }
 }
 

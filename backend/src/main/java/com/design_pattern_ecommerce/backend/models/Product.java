@@ -14,6 +14,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+
 import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
@@ -41,6 +43,9 @@ public class Product {
     @JsonIgnore
     @OneToMany(mappedBy = "product")
     private List<ProductPromotion> promotions = new ArrayList<>();
+
+    @Transient
+    private Boolean isSubscribedPromotion;
 
     public Product() {
     }
@@ -92,5 +97,13 @@ public class Product {
 
     public void setPromotions(List<ProductPromotion> promotions) {
         this.promotions = promotions;
+    }
+
+    public Boolean getIsSubscribedPromotion() {
+        return isSubscribedPromotion;
+    }
+
+    public void setIsSubscribedPromotion(Boolean isSubscribedPromotion) {
+        this.isSubscribedPromotion = isSubscribedPromotion;
     }
 }
