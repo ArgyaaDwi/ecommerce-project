@@ -30,11 +30,15 @@ public class ProductPromotionService {
     private ProductService productService;
 
 
+    public List<ProductPromotion> getAllProductPromotions() {
+        return productPromotionRepository.findAll();
+    }
+
     public List<ProductPromotion> getUserSubscribedProductPromotions(long userId) {
     
         List<Long> productIds = userPromotionRepository.findProductIdsByUserId(userId);
 
-        List<ProductPromotion> promotions = productPromotionRepository.findByIdIn(productIds); 
+        List<ProductPromotion> promotions = productPromotionRepository.findByIdInAndIsActiveTrue(productIds); 
 
         // only update that showed to user
         updateSeenPromotionLogs(productIds, userId);
@@ -49,7 +53,7 @@ public class ProductPromotionService {
         
         for (Long productId : productIds) {
             // Get all product promotions for this product
-            List<ProductPromotion> promotions = productPromotionRepository.findByProductId(productId);
+            List<ProductPromotion> promotions = productPromotionRepository.findByProductIdAndIsActiveTrue(productId);
             
             for (ProductPromotion promotion : promotions) {
                 // Check if log already exists
@@ -97,6 +101,21 @@ public class ProductPromotionService {
     }
 
 
+    public ProductPromotion CreateNewPromotion(Long productId, String name, int price, String description) {
+        Product product = productService.getProductById(productId);
+
+        ProductPromotion promotion = new ProductPromotion();
+        promotion.setProduct(product);
+        promotion.setName(name);
+        promotion.setPrice(price);
+        promotion.setDescription(description);
+        promotion.setIsActive(true);
+        productPromotionRepository.save(promotion);
+
+        return promotion;
+    }
+
+
     public void UnsubscribePromotion(long userId, Long productId) {
         Product product = productService.getProductById(productId);
         userPromotionRepository.deleteByUserIdAndProductId(userId, product.getId());
@@ -105,6 +124,15 @@ public class ProductPromotionService {
 
     public UserPromotion getByProductIdAndUserId(long userId, int productId) {
         return userPromotionRepository.findByUserIdAndProductId(userId, productId).orElse(null);
+    }
+
+
+    public void ActiveOrDeactivePromotion(int promotionId, boolean isActive) {
+        ProductPromotion promotion = productPromotionRepository.findById((long) promotionId)
+            .orElseThrow(() -> new RuntimeException("Promotion not found"));
+
+        promotion.setIsActive(isActive);
+        productPromotionRepository.save(promotion);
     }
 }
 
