@@ -39,6 +39,7 @@ CREATE TABLE
         price INTEGER NOT NULL,
         description VARCHAR(500),
         is_active BOOLEAN DEFAULT TRUE,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         CONSTRAINT fk_product_promotions_product FOREIGN KEY (product_id) REFERENCES products (id) ON DELETE CASCADE
     );
 
@@ -46,9 +47,22 @@ CREATE TABLE
     user_promotions (
         id SERIAL PRIMARY KEY,
         user_id INTEGER NOT NULL,
-        product_promotion_id INTEGER NOT NULL,
-        is_seen BOOLEAN DEFAULT FALSE,
+        product_id INTEGER NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         CONSTRAINT fk_user_promotions_user FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
-        CONSTRAINT fk_user_promotions_promotion FOREIGN KEY (product_promotion_id) REFERENCES product_promotions (id) ON DELETE CASCADE
+        CONSTRAINT fk_user_promotions_product FOREIGN KEY (product_id) REFERENCES products (id) ON DELETE CASCADE
+    );
+
+CREATE TABLE
+    product_promotion_logs (
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER NOT NULL,
+        product_promotion_id INTEGER NOT NULL,
+        product_id INTEGER NOT NULL,
+        is_seen BOOLEAN DEFAULT FALSE,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        CONSTRAINT fk_product_promotion_logs_user FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
+        CONSTRAINT fk_product_promotion_logs_promotion FOREIGN KEY (product_promotion_id) REFERENCES product_promotions (id) ON DELETE CASCADE,
+        CONSTRAINT fk_product_promotion_logs_product FOREIGN KEY (product_id) REFERENCES products (id) ON DELETE CASCADE
     );

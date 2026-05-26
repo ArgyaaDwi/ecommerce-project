@@ -1,5 +1,6 @@
 package com.design_pattern_ecommerce.backend.models;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,6 +13,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
 @Table(name = "product_promotions")
@@ -36,8 +38,12 @@ public class ProductPromotion {
     @Column(name = "is_active")
     private Boolean isActive = true;
 
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
+
     @OneToMany(mappedBy = "productPromotion")
-    private List<UserPromotion> userPromotions = new ArrayList<>();
+    private List<ProductPromotionLog> productPromotionLogs = new ArrayList<>();
 
     public ProductPromotion() {
     }
@@ -90,11 +96,19 @@ public class ProductPromotion {
         isActive = active;
     }
 
-    public List<UserPromotion> getUserPromotions() {
-        return userPromotions;
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
-    public void setUserPromotions(List<UserPromotion> userPromotions) {
-        this.userPromotions = userPromotions;
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public List<ProductPromotionLog> getProductPromotionLogs() {
+        return productPromotionLogs;
+    }
+
+    public void setProductPromotionLogs(List<ProductPromotionLog> productPromotionLogs) {
+        this.productPromotionLogs = productPromotionLogs;
     }
 }

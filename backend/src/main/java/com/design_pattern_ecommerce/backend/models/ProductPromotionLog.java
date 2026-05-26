@@ -13,8 +13,8 @@ import jakarta.persistence.Table;
 import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
-@Table(name = "user_promotions")
-public class UserPromotion {
+@Table(name = "product_promotion_logs")
+public class ProductPromotionLog {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,14 +25,24 @@ public class UserPromotion {
     private User user;
 
     @ManyToOne
+    @JoinColumn(name = "product_promotion_id", nullable = false)
+    private ProductPromotion productPromotion;
+
+    @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
+
+    @Column(name = "is_seen")
+    private Boolean isSeen = false;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
-    public UserPromotion() {
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
+    public ProductPromotionLog() {
     }
 
     public int getId() {
@@ -51,6 +61,14 @@ public class UserPromotion {
         this.user = user;
     }
 
+    public ProductPromotion getProductPromotion() {
+        return productPromotion;
+    }
+
+    public void setProductPromotion(ProductPromotion productPromotion) {
+        this.productPromotion = productPromotion;
+    }
+
     public Product getProduct() {
         return product;
     }
@@ -59,11 +77,27 @@ public class UserPromotion {
         this.product = product;
     }
 
+    public Boolean getIsSeen() {
+        return isSeen;
+    }
+
+    public void setIsSeen(Boolean seen) {
+        isSeen = seen;
+    }
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

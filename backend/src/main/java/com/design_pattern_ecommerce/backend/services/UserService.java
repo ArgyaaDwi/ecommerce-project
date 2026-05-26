@@ -64,6 +64,16 @@ public class UserService {
     }
 
     /**
+     * Get user by ID
+     * 
+     * @param userId User ID to search for
+     * @return User if found, null otherwise
+     */
+    public User getUserById(long userId) {
+        return userRepository.findById((int) userId).orElse(null);
+    }
+
+    /**
      * Validate and extract session key from Authorization header
      * Expected format: "Bearer <session-key>"
      * 
