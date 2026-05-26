@@ -8,7 +8,7 @@ db:
 	docker compose -f docker-compose.yml --env-file .env up -d db
 
 all:
-	docker compose -f docker-compose.yml --env-file .env build
+	docker compose -f docker-compose.yml --env-file .env build --no-cache
 	docker compose -f docker-compose.yml --env-file .env up -d
 
 down:

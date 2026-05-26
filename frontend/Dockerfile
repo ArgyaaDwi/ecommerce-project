@@ -4,13 +4,15 @@ FROM node:20-alpine AS builder
 WORKDIR /app
 
 # Copy package.json and package-lock.json
-COPY package.json package-lock.json* ./
+COPY frontend/package.json frontend/package-lock.json* ./
 
 # Install dependencies
-RUN npm ci
+RUN npm ci --silent
 
-# Copy source code
-COPY . .
+# Copy build config, public assets and source code
+COPY frontend/tsconfig.json frontend/tsconfig.app.json frontend/tsconfig.node.json frontend/vite.config.ts frontend/index.html ./
+COPY frontend/public ./public
+COPY frontend/src ./src
 
 # Build the application
 RUN npm run build
