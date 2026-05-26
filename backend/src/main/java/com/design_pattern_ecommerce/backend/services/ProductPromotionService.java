@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.design_pattern_ecommerce.backend.models.Product;
 import com.design_pattern_ecommerce.backend.models.ProductPromotion;
@@ -34,11 +35,12 @@ public class ProductPromotionService {
         return productPromotionRepository.findAll();
     }
 
+    @Transactional
     public List<ProductPromotion> getUserSubscribedProductPromotions(long userId) {
     
         List<Long> productIds = userPromotionRepository.findProductIdsByUserId(userId);
 
-        List<ProductPromotion> promotions = productPromotionRepository.findByIdInAndIsActiveTrue(productIds); 
+        List<ProductPromotion> promotions = productPromotionRepository.findByProductIdInAndIsActiveTrue(productIds); 
 
         // only update that showed to user
         updateSeenPromotionLogs(productIds, userId);
@@ -48,6 +50,7 @@ public class ProductPromotionService {
 
 
     // create log for user when show promotion to user, and update log to seen = true when user see the promotion
+    @Transactional
     private void updateSeenPromotionLogs(List<Long> productIds, long userId) {
         User user = userService.getUserById(userId);
         
@@ -80,6 +83,7 @@ public class ProductPromotionService {
     }
 
     // user subscribes to promotion for a product
+    @Transactional
     public void SubscribePromotion(long userId, Long productId) {
         
         User user = userService.getUserById(userId);
@@ -101,6 +105,7 @@ public class ProductPromotionService {
     }
 
 
+    @Transactional
     public ProductPromotion CreateNewPromotion(Long productId, String name, int price, String description) {
         Product product = productService.getProductById(productId);
 
@@ -116,9 +121,16 @@ public class ProductPromotionService {
     }
 
 
-    public void UnsubscribePromotion(long userId, Long productId) {
-        Product product = productService.getProductById(productId);
-        userPromotionRepository.deleteByUserIdAndProductId(userId, product.getId());
+    @Transactional
+    public void UnsubscribePromotion(long userId, long productId) {
+        // Check if subscription exists before deleting
+        boolean exists = userPromotionRepository.existsByUserIdAndProductId(userId, productId);
+        if (!exists) {
+            throw new RuntimeException("Subscription not found");
+        }
+        
+        // Delete the subscription
+        userPromotionRepository.deleteByUserIdAndProductId(userId, productId);
     }
 
 
@@ -127,6 +139,7 @@ public class ProductPromotionService {
     }
 
 
+    @Transactional
     public void ActiveOrDeactivePromotion(int promotionId, boolean isActive) {
         ProductPromotion promotion = productPromotionRepository.findById((long) promotionId)
             .orElseThrow(() -> new RuntimeException("Promotion not found"));

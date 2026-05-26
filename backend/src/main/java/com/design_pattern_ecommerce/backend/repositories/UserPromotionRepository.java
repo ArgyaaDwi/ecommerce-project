@@ -14,8 +14,11 @@ import com.design_pattern_ecommerce.backend.models.UserPromotion;
 @Repository
 public interface UserPromotionRepository extends JpaRepository<UserPromotion, Long> {
     List<UserPromotion> findByUserId(Long userId);
-    Optional<UserPromotion> findByUserIdAndProductId(Long userId, int productId);
-    void deleteByUserIdAndProductId(Long userId, int productId);
+    Optional<UserPromotion> findByUserIdAndProductId(Long userId, long productId);
+
+    boolean existsByUserIdAndProductId(Long userId, long productId);
+    
+    void deleteByUserIdAndProductId(Long userId, long productId);
     
     @Query("SELECT up.product.id FROM UserPromotion up WHERE up.user.id = :userId")
     List<Long> findProductIdsByUserId(@Param("userId") Long userId);

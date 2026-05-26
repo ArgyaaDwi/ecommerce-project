@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,6 +18,7 @@ import com.design_pattern_ecommerce.backend.models.User;
 import com.design_pattern_ecommerce.backend.services.ProductPromotionService;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/promotion")
@@ -51,7 +53,7 @@ public class ProductPromotionController {
 
     @PutMapping("/subscribe")
     @RequireAuth
-    public ResponseEntity<ApiResponse<ProductPromotion>> subscribeToPromotion(SubscribePromotionRequest bodyRequest, HttpServletRequest request) {
+    public ResponseEntity<ApiResponse<ProductPromotion>> subscribeToPromotion(@RequestBody @Valid SubscribePromotionRequest bodyRequest, HttpServletRequest request) {
         try {
             User user = (User) request.getAttribute("currentUser");
             
@@ -71,7 +73,7 @@ public class ProductPromotionController {
 
     @PutMapping("/unsubscribe")
     @RequireAuth
-    public ResponseEntity<ApiResponse<ProductPromotion>> unsubscribeFromPromotion(SubscribePromotionRequest bodyRequest, HttpServletRequest request) {
+    public ResponseEntity<ApiResponse<ProductPromotion>> unsubscribeFromPromotion(@RequestBody @Valid SubscribePromotionRequest bodyRequest, HttpServletRequest request) {
         try {
             User user = (User) request.getAttribute("currentUser");
 

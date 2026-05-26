@@ -13,7 +13,7 @@ import com.design_pattern_ecommerce.backend.models.ProductPromotion;
 public interface ProductPromotionRepository extends JpaRepository<ProductPromotion, Long> {
     List<ProductPromotion> findByProductIdAndIsActiveTrue(Long productId);
     
-    List<ProductPromotion> findByIdInAndIsActiveTrue(List<Long> ids);
+    List<ProductPromotion> findByProductIdInAndIsActiveTrue(List<Long> ids);
 
     @Query("SELECT p FROM ProductPromotion p JOIN UserPromotion up ON p.product.id = up.product.id WHERE up.user.id = :userId AND p.product.id IN :productIds AND p.isActive = true")
     List<ProductPromotion> findByUserIdAndProductIdIn(@Param("userId") Long userId, @Param("productIds") List<Long> productIds);

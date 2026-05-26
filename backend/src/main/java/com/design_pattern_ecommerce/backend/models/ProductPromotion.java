@@ -15,6 +15,8 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "product_promotions")
 public class ProductPromotion {
@@ -42,6 +44,7 @@ public class ProductPromotion {
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "productPromotion")
     private List<ProductPromotionLog> productPromotionLogs = new ArrayList<>();
 
