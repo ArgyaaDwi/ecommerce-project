@@ -20,7 +20,7 @@
                 "header": [],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n    \n}",
+                  "raw": "{\n    \"name\": \"tes\"\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -271,25 +271,6 @@
           "name": "Promotion",
           "item": [
             {
-              "name": "Subscribe Product Promotion",
-              "request": {
-                "method": "PUT",
-                "header": [],
-                "url": {
-                  "raw": "{{BaseUrl}}/promotionuser/subscribe/{}",
-                  "host": [
-                    "{{BaseUrl}}"
-                  ],
-                  "path": [
-                    "promotionuser",
-                    "subscribe",
-                    "{}"
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
               "name": "Get User Product Promotion (Subscribed)",
               "request": {
                 "method": "GET",
@@ -308,25 +289,112 @@
               "response": []
             },
             {
-              "name": "Unsubscribe Product Promotion",
+              "name": "Listen Event Promotion",
               "request": {
-                "method": "PUT",
+                "method": "GET",
                 "header": [],
                 "url": {
-                  "raw": "{{BaseUrl}}/promotionuser/unsubscribe/{}",
+                  "raw": "{{BaseUrl}}/promotion/stream?sessionKey=cc293389-4d8b-4f60-9880-9676f0f5808d",
                   "host": [
                     "{{BaseUrl}}"
                   ],
                   "path": [
-                    "promotionuser",
-                    "unsubscribe",
-                    "{}"
+                    "promotion",
+                    "stream"
+                  ],
+                  "query": [
+                    {
+                      "key": "sessionKey",
+                      "value": "cc293389-4d8b-4f60-9880-9676f0f5808d"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Subscribe Product Promotion",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{Session}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"productId\" : 1\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{BaseUrl}}/promotion/subscribe",
+                  "host": [
+                    "{{BaseUrl}}"
+                  ],
+                  "path": [
+                    "promotion",
+                    "subscribe"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Unsubscribe Product Promotion",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{Session}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"productId\" : 1\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{BaseUrl}}/promotion/unsubscribe",
+                  "host": [
+                    "{{BaseUrl}}"
+                  ],
+                  "path": [
+                    "promotion",
+                    "unsubscribe"
                   ]
                 }
               },
               "response": []
             }
           ]
+        },
+        {
+          "name": "New Request",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
         }
       ]
     },
@@ -334,7 +402,7 @@
       "name": "Admin",
       "item": [
         {
-          "name": "Promotion (not ready)",
+          "name": "Promotion",
           "item": [
             {
               "name": "Get All Promotion",
@@ -360,6 +428,15 @@
               "request": {
                 "method": "POST",
                 "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"productId\" : 1,\r\n    \"promotionName\" : \"Pocong\",\r\n    \"price\": 400000,\r\n    \"description\": \"pocongan harga\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
                 "url": {
                   "raw": "{{BaseUrl}}/admin/promotion/create",
                   "host": [
@@ -375,19 +452,143 @@
               "response": []
             },
             {
-              "name": "Update Promotion",
+              "name": "Update Promotion (Active/Inactive)",
               "request": {
                 "method": "PUT",
                 "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"promotionId\": 1,\r\n    \"isActive\": true\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
                 "url": {
-                  "raw": "{{BaseUrl}}/admin/promotion/updated",
+                  "raw": "{{BaseUrl}}/admin/promotion/update",
                   "host": [
                     "{{BaseUrl}}"
                   ],
                   "path": [
                     "admin",
                     "promotion",
-                    "updated"
+                    "update"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Product",
+          "item": [
+            {
+              "name": "Create product",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"name\": \"Beras\",\r\n    \"price\": 2000123,\r\n    \"categoryId\": 2,\r\n    \"description\": \"buat makan\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{BaseUrl}}/admin/product/create",
+                  "host": [
+                    "{{BaseUrl}}"
+                  ],
+                  "path": [
+                    "admin",
+                    "product",
+                    "create"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get All Product",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "method": "GET",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"productId\" : 1,\r\n    \"promotionName\" : \"Pocong\",\r\n    \"price\": 400000,\r\n    \"description\": \"pocongan harga\"\r\n}"
+                },
+                "url": {
+                  "raw": "{{BaseUrl}}/admin/product/list",
+                  "host": [
+                    "{{BaseUrl}}"
+                  ],
+                  "path": [
+                    "admin",
+                    "product",
+                    "list"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get Detail Product",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "method": "GET",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"productId\" : 1,\r\n    \"promotionName\" : \"Pocong\",\r\n    \"price\": 400000,\r\n    \"description\": \"pocongan harga\"\r\n}"
+                },
+                "url": {
+                  "raw": "{{BaseUrl}}/admin/product/detail/1",
+                  "host": [
+                    "{{BaseUrl}}"
+                  ],
+                  "path": [
+                    "admin",
+                    "product",
+                    "detail",
+                    "1"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update Product",
+              "request": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"name\": \"Beras\",\r\n    \"price\": 2000123,\r\n    \"categoryId\": 2,\r\n    \"description\": \"buat makan\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{BaseUrl}}/admin/product/detail/",
+                  "host": [
+                    "{{BaseUrl}}"
+                  ],
+                  "path": [
+                    "admin",
+                    "product",
+                    "detail",
+                    ""
                   ]
                 }
               },
