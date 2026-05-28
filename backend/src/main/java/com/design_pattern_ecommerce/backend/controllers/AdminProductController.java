@@ -63,7 +63,7 @@ public class AdminProductController {
     }
 
     @GetMapping("/detail/{productId}")
-    public ResponseEntity<ApiResponse<ProductDetailResponse>> getProductDetails(@PathVariable Long productId) {
+    public ResponseEntity<ApiResponse<ProductDetailAdminResponse>> getProductDetails(@PathVariable Long productId) {
         try {
             Product product = productService.getDetailProductById(productId);
 
@@ -71,9 +71,9 @@ public class AdminProductController {
                 return ResponseEntity.status(404).body(new ApiResponse<>(false, "Product not found", null));
             }
 
-            List<ProductPromotionResponse> promotions = new ArrayList<>();
+            List<ProductPromotionAdminResponse> promotions = new ArrayList<>();
             for (ProductPromotion promotion : product.getPromotions()) {
-                promotions.add(new ProductPromotionResponse(
+                promotions.add(new ProductPromotionAdminResponse(
                     promotion.getId(),
                     promotion.getName(),
                     promotion.getPrice(),
@@ -83,7 +83,7 @@ public class AdminProductController {
                 ));
             }
 
-            ProductDetailResponse response = new ProductDetailResponse(product, promotions);
+            ProductDetailAdminResponse response = new ProductDetailAdminResponse(product, promotions);
 
             return ResponseEntity.ok(new ApiResponse<>(true, "Product details retrieved successfully", response));
         } catch (Exception e) {
@@ -156,11 +156,11 @@ class ProductRequest {
 
 }
 
-class ProductDetailResponse {
+class ProductDetailAdminResponse {
     private final Product product;
-    private final List<ProductPromotionResponse> promotions;
+    private final List<ProductPromotionAdminResponse> promotions;
 
-    public ProductDetailResponse(Product product, List<ProductPromotionResponse> promotions) {
+    public ProductDetailAdminResponse(Product product, List<ProductPromotionAdminResponse> promotions) {
         this.product = product;
         this.promotions = promotions;
     }
@@ -169,12 +169,12 @@ class ProductDetailResponse {
         return product;
     }
 
-    public List<ProductPromotionResponse> getPromotions() {
+    public List<ProductPromotionAdminResponse> getPromotions() {
         return promotions;
     }
 }
 
-class ProductPromotionResponse {
+class ProductPromotionAdminResponse {
     private final int id;
     private final String name;
     private final Integer price;
@@ -182,7 +182,7 @@ class ProductPromotionResponse {
     private final Boolean isActive;
     private final java.time.LocalDateTime createdAt;
 
-    public ProductPromotionResponse(
+    public ProductPromotionAdminResponse(
         int id,
         String name,
         Integer price,
