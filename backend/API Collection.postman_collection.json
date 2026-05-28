@@ -14,70 +14,6 @@
           "name": "User",
           "item": [
             {
-              "name": "Create Session",
-              "request": {
-                "method": "POST",
-                "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n    \"name\": \"tes\"\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
-                "url": {
-                  "raw": "{{BaseUrl}}/user/create_session",
-                  "host": [
-                    "{{BaseUrl}}"
-                  ],
-                  "path": [
-                    "user",
-                    "create_session"
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "Set Preference",
-              "request": {
-                "auth": {
-                  "type": "bearer",
-                  "bearer": [
-                    {
-                      "key": "token",
-                      "value": "{{Session}}",
-                      "type": "string"
-                    }
-                  ]
-                },
-                "method": "POST",
-                "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n    \"category_ids\": [1,2]\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
-                "url": {
-                  "raw": "{{BaseUrl}}/user/set_preference",
-                  "host": [
-                    "{{BaseUrl}}"
-                  ],
-                  "path": [
-                    "user",
-                    "set_preference"
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
               "name": "Get Session",
               "protocolProfileBehavior": {
                 "disableBodyPruning": true
@@ -112,6 +48,112 @@
                   "path": [
                     "user",
                     "get_session"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create Session",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"name\": \"tes\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{BaseUrl}}/user/create_session",
+                  "host": [
+                    "{{BaseUrl}}"
+                  ],
+                  "path": [
+                    "user",
+                    "create_session"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get User Preferences",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{Session}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"name\": \"mirzadasd\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{BaseUrl}}/user/preference/detail",
+                  "host": [
+                    "{{BaseUrl}}"
+                  ],
+                  "path": [
+                    "user",
+                    "preference",
+                    "detail"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Set Preference",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{Session}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"categoryIds\": [] // set [] or with value [1,4]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{BaseUrl}}/user/preference/update",
+                  "host": [
+                    "{{BaseUrl}}"
+                  ],
+                  "path": [
+                    "user",
+                    "preference",
+                    "update"
                   ]
                 }
               },
@@ -387,14 +429,6 @@
               "response": []
             }
           ]
-        },
-        {
-          "name": "New Request",
-          "request": {
-            "method": "GET",
-            "header": []
-          },
-          "response": []
         }
       ]
     },
