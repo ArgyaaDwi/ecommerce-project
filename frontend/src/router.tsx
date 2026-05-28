@@ -1,45 +1,24 @@
 import { Navigate, Route, Routes } from "react-router-dom";
+import MainLayout from "@/layouts/MainLayout";
+import Homepage from "@/pages/user/Homepage";
+import MyPreferencePage from "@/pages/user/MyPreferencePage";
+import ProductPage from "@/pages/user/ProductPage";
+import ProfilePage from "@/pages/user/ProfilePage";
 import AdminLayout from "@/layouts/AdminLayout";
 import AdminDashboardPage from "@/pages/admin/DashboardPage";
 import AdminProductPage from "@/pages/admin/ProductPage";
 import AdminPromoPage from "@/pages/admin/PromoPage";
 import AdminCategoryPage from "@/pages/admin/CategoryPage";
 
-function PublicHome() {
-  return (
-    <main className="min-h-screen p-6">
-      <h1 className="text-2xl font-semibold">Homepage</h1>
-      <p className="mt-2 text-gray-600">Halaman public untuk user biasa.</p>
-    </main>
-  );
-}
-
-function MyPreferencePage() {
-  return (
-    <main className="min-h-screen p-6">
-      <h1 className="text-2xl font-semibold">My Preference</h1>
-      <p className="mt-2 text-gray-600">Placeholder halaman preferensi user.</p>
-    </main>
-  );
-}
-
-function ProductsPage() {
-  return (
-    <main className="min-h-screen p-6">
-      <h1 className="text-2xl font-semibold">Products</h1>
-      <p className="mt-2 text-gray-600">Placeholder halaman daftar produk.</p>
-    </main>
-  );
-}
-
-// admin pages are imported above from src/pages/admin
-
 export default function AppRouter() {
   return (
     <Routes>
-      <Route path="/" element={<PublicHome />} />
-      <Route path="/my-preference" element={<MyPreferencePage />} />
-      <Route path="/products" element={<ProductsPage />} />
+      <Route element={<MainLayout />}>
+        <Route path="/" element={<Homepage />} />
+        <Route path="/my-preference" element={<MyPreferencePage />} />
+        <Route path="/products" element={<ProductPage />} />
+        <Route path="/profile" element={<ProfilePage />} />
+      </Route>
 
       <Route path="/admin" element={<AdminLayout />}>
         <Route index element={<Navigate to="dashboard" replace />} />

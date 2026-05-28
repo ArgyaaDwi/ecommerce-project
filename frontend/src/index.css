@@ -15,8 +15,11 @@
   --color-border: #E2E8F0;
   --color-background: #FFFFFF;
   --color-foreground: #0F172A;
+  --color-primaryKu: #08306b;
   --color-backgroundAdmin: #f7f9fa;
   --radius: 0.5rem;
+  --color-kuning-muda: #fff7e4;
+  --color-icon: #FBBF24;
   --font-sans: 'Poppins', ui-sans-serif, system-ui;
 }
 
@@ -135,4 +138,14 @@ code {
   line-height: 135%;
   padding: 4px 8px;
   background: var(--code-bg);
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
 }

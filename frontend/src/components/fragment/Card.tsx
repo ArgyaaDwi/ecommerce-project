@@ -7,7 +7,7 @@ interface CardProps {
   count: number | string;
   color: string;
   url: string;
-  isDetail?: boolean; // Props baru dengan default true
+  isDetail?: boolean;
 }
 
 const Card = ({
@@ -16,7 +16,7 @@ const Card = ({
   count,
   color,
   url,
-  isDetail = true, // Default true
+  isDetail = true,
 }: CardProps) => {
   return (
     <div className="flex items-center bg-white shadow-lg rounded-md overflow-hidden">
@@ -28,7 +28,6 @@ const Card = ({
         <h3 className="mt-2 text-sm font-normal text-gray-600">{text}</h3>
         <p className="mt-2 text-2xl font-semibold text-black">{count}</p>
 
-        {/* Hanya tampilkan jika isDetail = true */}
         {isDetail && (
           <Link to={url} className="mt-2">
             <div className="flex items-center space-x-1">
