@@ -35,6 +35,15 @@ public class Product {
     @Column
     private String description;
 
+    @Column(name = "image_url")
+    private String imageUrl;
+
+    @Column
+    private Float rating;
+
+    @Column
+    private Integer sold;
+
     @ManyToOne
     @JoinColumn(name = "category_id")
     private ProductCategory category;
@@ -83,6 +92,30 @@ public class Product {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public Float getRating() {
+        return rating;
+    }
+
+    public void setRating(Float rating) {
+        this.rating = rating;
+    }
+
+    public Integer getSold() {
+        return sold;
+    }
+
+    public void setSold(Integer sold) {
+        this.sold = sold;
     }
 
     public void setCategoryId(Integer categoryId) {

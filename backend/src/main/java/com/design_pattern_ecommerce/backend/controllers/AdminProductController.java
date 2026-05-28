@@ -50,7 +50,8 @@ public class AdminProductController {
                 bodyRequest.getName(),
                 bodyRequest.getDescription(),
                 bodyRequest.getPrice().intValue(),
-                bodyRequest.getCategoryId()
+                bodyRequest.getCategoryId(),
+                bodyRequest.getImageUrl()
             );
 
             return ResponseEntity.ok(new ApiResponse<>(true, "Product created successfully", product));
@@ -78,7 +79,8 @@ public class AdminProductController {
                 bodyRequest.getName(),
                 bodyRequest.getDescription(),
                 bodyRequest.getPrice().intValue(),
-                bodyRequest.getCategoryId()
+                bodyRequest.getCategoryId(),
+                bodyRequest.getImageUrl()
             );
 
             return ResponseEntity.ok(new ApiResponse<>(true, "Product updated successfully", product));
@@ -108,6 +110,10 @@ class ProductRequest {
     @JsonProperty("categoryId")
     private Integer categoryId;
 
+    @NotBlank
+    @JsonProperty("imageUrl")
+    private String imageUrl;
+
     public String getName() {
         return name;
     }
@@ -123,4 +129,9 @@ class ProductRequest {
     public Integer getCategoryId() {
         return categoryId;
     }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
 }

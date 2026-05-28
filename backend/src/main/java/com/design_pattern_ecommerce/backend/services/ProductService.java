@@ -1,6 +1,7 @@
 package com.design_pattern_ecommerce.backend.services;
 
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,18 +39,21 @@ public class ProductService {
         return productRepository.findByCategory_Id(categoryId);
     }
 
-    public Product createProduct(String name, String description, Integer price, Integer categoryId) {
+    public Product createProduct(String name, String description, Integer price, Integer categoryId, String imageUrl) {
 
         Product newProduct = new Product();
         newProduct.setName(name);
         newProduct.setDescription(description);
         newProduct.setPrice(price);
         newProduct.setCategoryId(categoryId);
+        newProduct.setImageUrl(imageUrl);
+        newProduct.setRating(generateRandomRating());
+        newProduct.setSold(generateRandomSold());
 
         return productRepository.save(newProduct);
     }
 
-    public Product updateProduct(Long id, String name, String description, Integer price, Integer categoryId) {
+    public Product updateProduct(Long id, String name, String description, Integer price, Integer categoryId, String imageUrl) {
         Product existingProduct = productRepository.findById(id).orElse(null);
         if (existingProduct == null) {
             return null;
@@ -59,8 +63,17 @@ public class ProductService {
         existingProduct.setDescription(description);
         existingProduct.setPrice(price);
         existingProduct.setCategoryId(categoryId);
+        existingProduct.setImageUrl(imageUrl);
 
         return productRepository.save(existingProduct);
+    }
+
+    private Float generateRandomRating() {
+        return (float) ThreadLocalRandom.current().nextDouble(3.0, 5.0);
+    }
+
+    private Integer generateRandomSold() {
+        return ThreadLocalRandom.current().nextInt(0, 501);
     }
 
     public List<Product> getRecomendationProductByUserPreference(int userId) {
