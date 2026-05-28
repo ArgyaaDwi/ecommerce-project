@@ -6,13 +6,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.design_pattern_ecommerce.backend.models.Product;
+import com.design_pattern_ecommerce.backend.models.User;
 import com.design_pattern_ecommerce.backend.repositories.ProductRepository;
+import com.design_pattern_ecommerce.backend.repositories.UserRepository;
+import com.design_pattern_ecommerce.backend.strategies.UserProductDisplay;
+import com.design_pattern_ecommerce.backend.strategies.UserProductDisplayStrategy;
+import com.design_pattern_ecommerce.backend.strategies.impl.PreferenceProductStartegy;
+import com.design_pattern_ecommerce.backend.strategies.impl.DefaultProductStategy;
 
 @Service
 public class ProductService {
-    
+
     @Autowired
     private ProductRepository productRepository;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private PreferenceProductStartegy preferenceProductStartegy;
+    @Autowired
+    private DefaultProductStategy defaultProductStategy;
 
     public List<Product> getAllProducts() {
         return productRepository.findAll();
@@ -27,13 +39,13 @@ public class ProductService {
     }
 
     public Product createProduct(String name, String description, Integer price, Integer categoryId) {
-        
+
         Product newProduct = new Product();
         newProduct.setName(name);
         newProduct.setDescription(description);
         newProduct.setPrice(price);
         newProduct.setCategoryId(categoryId);
-        
+
         return productRepository.save(newProduct);
     }
 
@@ -53,8 +65,21 @@ public class ProductService {
 
     public List<Product> getRecomendationProductByUserPreference(int userId) {
 
-        // todo call display strategy based on user preferences
+        // get User
+        User user = userRepository.findById(userId).orElse(null);
+        UserProductDisplay userProductDisplay = new UserProductDisplay();
 
-        return null;
+        UserProductDisplayStrategy strategy;
+
+        // Pilih strategy berdasarkan user preference type
+        if (user != null && "category".equals(user.getProductPreferenceType())) {
+            strategy = preferenceProductStartegy;
+        } else {
+            strategy = defaultProductStategy;
+        }
+
+        userProductDisplay.setStrategy(strategy);
+
+        return userProductDisplay.displayUserProductRecomendations(userId);
     }
 }

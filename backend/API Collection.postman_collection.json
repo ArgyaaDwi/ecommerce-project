@@ -295,13 +295,13 @@
                 "method": "GET",
                 "header": [],
                 "url": {
-                  "raw": "{{BaseUrl}}/product/recomandation",
+                  "raw": "{{BaseUrl}}/product/recomendation",
                   "host": [
                     "{{BaseUrl}}"
                   ],
                   "path": [
                     "product",
-                    "recomandation"
+                    "recomendation"
                   ]
                 }
               },
