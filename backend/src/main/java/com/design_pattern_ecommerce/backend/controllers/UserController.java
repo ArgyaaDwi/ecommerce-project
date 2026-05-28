@@ -2,9 +2,12 @@ package com.design_pattern_ecommerce.backend.controllers;
 
 import com.design_pattern_ecommerce.backend.annotations.RequireAuth;
 import com.design_pattern_ecommerce.backend.models.User;
+import com.design_pattern_ecommerce.backend.models.UserPreference;
+import com.design_pattern_ecommerce.backend.services.UserPreferenceService;
 import com.design_pattern_ecommerce.backend.services.UserService;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 
 import java.util.List;
 
@@ -20,6 +23,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private UserPreferenceService userPreferenceService;
 
     /**
      * Create new user session
@@ -107,23 +113,16 @@ public class UserController {
      *   "categoryIds": [1, 2, 3]
      * }
      */
-    @PostMapping("/set_preference")
+    @PostMapping("/preference/update")
     @RequireAuth
-    public ResponseEntity<ApiResponse<User>> setUserPreference(@RequestBody SetUserPreferenceRequest request, HttpServletRequest httpRequest) {
+    public ResponseEntity<ApiResponse<User>> setUserPreference(@RequestBody @Valid SetUserPreferenceRequest request, HttpServletRequest httpRequest) {
         try {
             User user = (User) httpRequest.getAttribute("currentUser");
-            
-            List<Integer> categoryIds = request.getCategoryIds();
-            if (categoryIds == null || categoryIds.isEmpty()) {
-                return new ResponseEntity<>(
-                    new ApiResponse<>(false, "Category IDs cannot be empty", null),
-                    HttpStatus.BAD_REQUEST
-                );
-            }
 
+            User updatedUser = userPreferenceService.setUserProductCategoryPreference(user.getId(), request.getCategoryIds());
 
             return new ResponseEntity<>(
-                new ApiResponse<>(true, "User preference updated successfully", user),
+                new ApiResponse<>(true, "User preference updated successfully", updatedUser),
                 HttpStatus.OK
             );
         } catch (Exception e) {
@@ -133,6 +132,27 @@ public class UserController {
             );
         }
     }
+
+    @GetMapping("/preference/detail")
+    @RequireAuth
+    public ResponseEntity<ApiResponse<List<UserPreference>>> getUserPreferenceDetail(HttpServletRequest httpRequest) {
+
+        try {
+            User user = (User) httpRequest.getAttribute("currentUser");
+            List<UserPreference> preferences = userPreferenceService.getUserPreferencesByUserId(user.getId());
+
+            return new ResponseEntity<>(
+                new ApiResponse<>(true, "User preference retrieved successfully", preferences),
+                HttpStatus.OK
+            );
+        } catch (Exception e) {
+            return new ResponseEntity<>(
+                new ApiResponse<>(false, "Failed to get user preference: " + e.getMessage(), null),
+                HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
+    }
+    
 }
 
 class SetUserPreferenceRequest {

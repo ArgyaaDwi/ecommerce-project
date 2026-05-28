@@ -51,7 +51,7 @@ public class ProductService {
         return productRepository.save(existingProduct);
     }
 
-    public List<Product> getProductsByUserPreferences(int userId) {
+    public List<Product> getRecomendationProductByUserPreference(int userId) {
 
         // todo call display strategy based on user preferences
 

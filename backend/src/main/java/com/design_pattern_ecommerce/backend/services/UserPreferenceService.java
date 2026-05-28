@@ -22,6 +22,11 @@ public class UserPreferenceService {
     @Autowired
     private ProductCategoryRepository productCategoryRepository;
 
+
+    public List<UserPreference> getUserPreferencesByUserId(int userId) {
+        return userPreferenceRepository.findByUserId(userId);
+    }
+
     /**
      * Set product preference for user
      * 
@@ -45,7 +50,7 @@ public class UserPreferenceService {
         return userRepository.save(user);
     }
 
-    public User setUserProductPreference(int userId, List<Integer> productCategoryIds) {
+    public User setUserProductCategoryPreference(int userId, List<Integer> productCategoryIds) {
         
         User user = userRepository.findById(userId).orElse(null);
         if (user == null) {
@@ -74,7 +79,18 @@ public class UserPreferenceService {
             userPreferenceRepository.save(userPreference);
         }
 
-        return user;
+        // update user product_preference_type
+        if (productCategoryIds.size() >= 1) {
+            user.setProductPreferenceType("category");
+        } else {
+            user.setProductPreferenceType("default");
+
+            // delete user preferences if category list is empty
+            List<UserPreference> existingPreferences = userPreferenceRepository.findByUserId(userId);
+            userPreferenceRepository.deleteAll(existingPreferences);
+        }
+
+        return userRepository.save(user);
     }
 
 

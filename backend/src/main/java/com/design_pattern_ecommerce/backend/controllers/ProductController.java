@@ -151,7 +151,7 @@ public class ProductController {
         try {
             User user = (User) request.getAttribute("currentUser");
             
-            List<Product> products = productService.getProductsByUserPreferences(user.getId());
+            List<Product> products = productService.getRecomendationProductByUserPreference(user.getId());
 
             return new ResponseEntity<>(
                 new ApiResponse<>(true, "Products retrieved successfully", products),

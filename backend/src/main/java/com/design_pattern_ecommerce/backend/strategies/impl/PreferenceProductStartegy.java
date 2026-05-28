@@ -9,7 +9,11 @@ public class PreferenceProductStartegy implements UserProductDisplayStrategy {
 
     @Override
     public List<Product> GetUserProducts(int userId) {
-    
+        
+        // get all user preferences
+        // List<Long> categoryIds = 
+
+
         return null;
     }
     
