@@ -1,5 +1,9 @@
 package com.design_pattern_ecommerce.backend.strategies;
 
+import java.util.List;
+
+import com.design_pattern_ecommerce.backend.models.Product;
+
 public class UserProductDisplay {
     private UserProductDisplayStrategy strategy;  
 
@@ -14,10 +18,11 @@ public class UserProductDisplay {
         return strategy;
     }
     
-    public void displayUserProductRecomendations(int userId) {
+    public List<Product> displayUserProductRecomendations(int userId) {
         if (strategy == null) {
             throw new IllegalStateException("Strategy not set");
         }
-        strategy.GetUserProducts(userId);
+        
+        return strategy.GetUserProducts(userId);
     }
 }

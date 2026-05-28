@@ -1,5 +1,6 @@
 package com.design_pattern_ecommerce.backend.controllers;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.design_pattern_ecommerce.backend.models.Product;
+import com.design_pattern_ecommerce.backend.models.ProductPromotion;
 import com.design_pattern_ecommerce.backend.services.ProductService;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -50,7 +52,8 @@ public class AdminProductController {
                 bodyRequest.getName(),
                 bodyRequest.getDescription(),
                 bodyRequest.getPrice().intValue(),
-                bodyRequest.getCategoryId()
+                bodyRequest.getCategoryId(),
+                bodyRequest.getImageUrl()
             );
 
             return ResponseEntity.ok(new ApiResponse<>(true, "Product created successfully", product));
@@ -60,11 +63,29 @@ public class AdminProductController {
     }
 
     @GetMapping("/detail/{productId}")
-    public ResponseEntity<ApiResponse<Product>> getProductDetails(@PathVariable Long productId) {
+    public ResponseEntity<ApiResponse<ProductDetailAdminResponse>> getProductDetails(@PathVariable Long productId) {
         try {
-            Product product = productService.getProductById(productId);
+            Product product = productService.getDetailProductById(productId);
 
-            return ResponseEntity.ok(new ApiResponse<>(true, "Product details retrieved successfully", product));
+            if (product == null) {
+                return ResponseEntity.status(404).body(new ApiResponse<>(false, "Product not found", null));
+            }
+
+            List<ProductPromotionAdminResponse> promotions = new ArrayList<>();
+            for (ProductPromotion promotion : product.getPromotions()) {
+                promotions.add(new ProductPromotionAdminResponse(
+                    promotion.getId(),
+                    promotion.getName(),
+                    promotion.getPrice(),
+                    promotion.getDescription(),
+                    promotion.getIsActive(),
+                    promotion.getCreatedAt()
+                ));
+            }
+
+            ProductDetailAdminResponse response = new ProductDetailAdminResponse(product, promotions);
+
+            return ResponseEntity.ok(new ApiResponse<>(true, "Product details retrieved successfully", response));
         } catch (Exception e) {
             return ResponseEntity.status(500).body(new ApiResponse<>(false, "Failed to retrieve product details: " + e.getMessage(), null));
         }
@@ -78,7 +99,8 @@ public class AdminProductController {
                 bodyRequest.getName(),
                 bodyRequest.getDescription(),
                 bodyRequest.getPrice().intValue(),
-                bodyRequest.getCategoryId()
+                bodyRequest.getCategoryId(),
+                bodyRequest.getImageUrl()
             );
 
             return ResponseEntity.ok(new ApiResponse<>(true, "Product updated successfully", product));
@@ -108,6 +130,10 @@ class ProductRequest {
     @JsonProperty("categoryId")
     private Integer categoryId;
 
+    @NotBlank
+    @JsonProperty("imageUrl")
+    private String imageUrl;
+
     public String getName() {
         return name;
     }
@@ -122,5 +148,77 @@ class ProductRequest {
 
     public Integer getCategoryId() {
         return categoryId;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+}
+
+class ProductDetailAdminResponse {
+    private final Product product;
+    private final List<ProductPromotionAdminResponse> promotions;
+
+    public ProductDetailAdminResponse(Product product, List<ProductPromotionAdminResponse> promotions) {
+        this.product = product;
+        this.promotions = promotions;
+    }
+
+    public Product getProduct() {
+        return product;
+    }
+
+    public List<ProductPromotionAdminResponse> getPromotions() {
+        return promotions;
+    }
+}
+
+class ProductPromotionAdminResponse {
+    private final int id;
+    private final String name;
+    private final Integer price;
+    private final String description;
+    private final Boolean isActive;
+    private final java.time.LocalDateTime createdAt;
+
+    public ProductPromotionAdminResponse(
+        int id,
+        String name,
+        Integer price,
+        String description,
+        Boolean isActive,
+        java.time.LocalDateTime createdAt
+    ) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+        this.description = description;
+        this.isActive = isActive;
+        this.createdAt = createdAt;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Integer getPrice() {
+        return price;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public Boolean getIsActive() {
+        return isActive;
+    }
+
+    public java.time.LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 }

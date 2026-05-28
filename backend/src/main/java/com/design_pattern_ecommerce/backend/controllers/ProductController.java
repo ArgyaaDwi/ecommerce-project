@@ -3,6 +3,7 @@ package com.design_pattern_ecommerce.backend.controllers;
 import com.design_pattern_ecommerce.backend.annotations.RequireAuth;
 import com.design_pattern_ecommerce.backend.models.Product;
 import com.design_pattern_ecommerce.backend.models.ProductCategory;
+import com.design_pattern_ecommerce.backend.models.ProductPromotion;
 import com.design_pattern_ecommerce.backend.models.User;
 import com.design_pattern_ecommerce.backend.models.UserPromotion;
 import com.design_pattern_ecommerce.backend.repositories.ProductCategoryRepository;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -65,11 +67,11 @@ public class ProductController {
 
     @GetMapping("/detail/{productId}")
     @RequireAuth
-    public ResponseEntity<ApiResponse<Product>> getProductById(@PathVariable Long productId, HttpServletRequest request) {
+    public ResponseEntity<ApiResponse<ProductDetailResponse>> getProductById(@PathVariable Long productId, HttpServletRequest request) {
         try {
             User user = (User) request.getAttribute("currentUser");
 
-            Product product = productService.getProductById(productId);
+            Product product = productService.getDetailProductById(productId);
 
             if (product == null) {
                 return new ResponseEntity<>(
@@ -88,8 +90,22 @@ public class ProductController {
 
             product.setIsSubscribedPromotion(isSubscribedPromotion);
 
+            List<ProductPromotionResponse> promotions = new ArrayList<>();
+            for (ProductPromotion promotion : product.getPromotions()) {
+                promotions.add(new ProductPromotionResponse(
+                    promotion.getId(),
+                    promotion.getName(),
+                    promotion.getPrice(),
+                    promotion.getDescription(),
+                    promotion.getIsActive(),
+                    promotion.getCreatedAt()
+                ));
+            }
+
+            ProductDetailResponse response = new ProductDetailResponse(product, promotions);
+
             return new ResponseEntity<>(
-                new ApiResponse<>(true, "Product retrieved successfully", product),
+                new ApiResponse<>(true, "Product retrieved successfully", response),
                 HttpStatus.OK
             );
         } catch (Exception e) {
@@ -151,7 +167,7 @@ public class ProductController {
         try {
             User user = (User) request.getAttribute("currentUser");
             
-            List<Product> products = productService.getProductsByUserPreferences(user.getId());
+            List<Product> products = productService.getRecomendationProductByUserPreference(user.getId());
 
             return new ResponseEntity<>(
                 new ApiResponse<>(true, "Products retrieved successfully", products),
@@ -165,4 +181,71 @@ public class ProductController {
         }
     }
 
+}
+
+class ProductDetailResponse {
+    private final Product product;
+    private final List<ProductPromotionResponse> promotions;
+
+    public ProductDetailResponse(Product product, List<ProductPromotionResponse> promotions) {
+        this.product = product;
+        this.promotions = promotions;
+    }
+
+    public Product getProduct() {
+        return product;
+    }
+
+    public List<ProductPromotionResponse> getPromotions() {
+        return promotions;
+    }
+}
+
+class ProductPromotionResponse {
+    private final int id;
+    private final String name;
+    private final Integer price;
+    private final String description;
+    private final Boolean isActive;
+    private final java.time.LocalDateTime createdAt;
+
+    public ProductPromotionResponse(
+        int id,
+        String name,
+        Integer price,
+        String description,
+        Boolean isActive,
+        java.time.LocalDateTime createdAt
+    ) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+        this.description = description;
+        this.isActive = isActive;
+        this.createdAt = createdAt;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Integer getPrice() {
+        return price;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public Boolean getIsActive() {
+        return isActive;
+    }
+
+    public java.time.LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
 }
