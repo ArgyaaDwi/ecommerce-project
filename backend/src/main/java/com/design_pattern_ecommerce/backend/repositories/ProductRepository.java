@@ -9,6 +9,6 @@ import com.design_pattern_ecommerce.backend.models.Product;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
-    List<Product> findByCategoryId(Long categoryId);
+    List<Product> findByCategory_Id(Long categoryId);
 
 }

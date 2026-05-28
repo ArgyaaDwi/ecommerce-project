@@ -23,7 +23,32 @@ public class ProductService {
     }
 
     public List<Product> getProductsByCategoryId(Long categoryId) {
-        return productRepository.findByCategoryId(categoryId);
+        return productRepository.findByCategory_Id(categoryId);
+    }
+
+    public Product createProduct(String name, String description, Integer price, Integer categoryId) {
+        
+        Product newProduct = new Product();
+        newProduct.setName(name);
+        newProduct.setDescription(description);
+        newProduct.setPrice(price);
+        newProduct.setCategoryId(categoryId);
+        
+        return productRepository.save(newProduct);
+    }
+
+    public Product updateProduct(Long id, String name, String description, Integer price, Integer categoryId) {
+        Product existingProduct = productRepository.findById(id).orElse(null);
+        if (existingProduct == null) {
+            return null;
+        }
+
+        existingProduct.setName(name);
+        existingProduct.setDescription(description);
+        existingProduct.setPrice(price);
+        existingProduct.setCategoryId(categoryId);
+
+        return productRepository.save(existingProduct);
     }
 
     public List<Product> getProductsByUserPreferences(int userId) {
