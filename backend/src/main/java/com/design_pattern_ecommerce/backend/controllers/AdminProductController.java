@@ -1,5 +1,6 @@
 package com.design_pattern_ecommerce.backend.controllers;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.design_pattern_ecommerce.backend.models.Product;
+import com.design_pattern_ecommerce.backend.models.ProductPromotion;
 import com.design_pattern_ecommerce.backend.services.ProductService;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -61,11 +63,29 @@ public class AdminProductController {
     }
 
     @GetMapping("/detail/{productId}")
-    public ResponseEntity<ApiResponse<Product>> getProductDetails(@PathVariable Long productId) {
+    public ResponseEntity<ApiResponse<ProductDetailResponse>> getProductDetails(@PathVariable Long productId) {
         try {
-            Product product = productService.getProductById(productId);
+            Product product = productService.getDetailProductById(productId);
 
-            return ResponseEntity.ok(new ApiResponse<>(true, "Product details retrieved successfully", product));
+            if (product == null) {
+                return ResponseEntity.status(404).body(new ApiResponse<>(false, "Product not found", null));
+            }
+
+            List<ProductPromotionResponse> promotions = new ArrayList<>();
+            for (ProductPromotion promotion : product.getPromotions()) {
+                promotions.add(new ProductPromotionResponse(
+                    promotion.getId(),
+                    promotion.getName(),
+                    promotion.getPrice(),
+                    promotion.getDescription(),
+                    promotion.getIsActive(),
+                    promotion.getCreatedAt()
+                ));
+            }
+
+            ProductDetailResponse response = new ProductDetailResponse(product, promotions);
+
+            return ResponseEntity.ok(new ApiResponse<>(true, "Product details retrieved successfully", response));
         } catch (Exception e) {
             return ResponseEntity.status(500).body(new ApiResponse<>(false, "Failed to retrieve product details: " + e.getMessage(), null));
         }
@@ -134,4 +154,71 @@ class ProductRequest {
         return imageUrl;
     }
 
+}
+
+class ProductDetailResponse {
+    private final Product product;
+    private final List<ProductPromotionResponse> promotions;
+
+    public ProductDetailResponse(Product product, List<ProductPromotionResponse> promotions) {
+        this.product = product;
+        this.promotions = promotions;
+    }
+
+    public Product getProduct() {
+        return product;
+    }
+
+    public List<ProductPromotionResponse> getPromotions() {
+        return promotions;
+    }
+}
+
+class ProductPromotionResponse {
+    private final int id;
+    private final String name;
+    private final Integer price;
+    private final String description;
+    private final Boolean isActive;
+    private final java.time.LocalDateTime createdAt;
+
+    public ProductPromotionResponse(
+        int id,
+        String name,
+        Integer price,
+        String description,
+        Boolean isActive,
+        java.time.LocalDateTime createdAt
+    ) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+        this.description = description;
+        this.isActive = isActive;
+        this.createdAt = createdAt;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Integer getPrice() {
+        return price;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public Boolean getIsActive() {
+        return isActive;
+    }
+
+    public java.time.LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
 }

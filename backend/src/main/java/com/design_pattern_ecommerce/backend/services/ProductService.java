@@ -35,6 +35,10 @@ public class ProductService {
         return productRepository.findById(id).orElse(null);
     }
 
+    public Product getDetailProductById(Long id) {
+        return productRepository.findByIdWithPromotions(id).orElse(null);
+    }
+
     public List<Product> getProductsByCategoryId(Long categoryId) {
         return productRepository.findByCategory_Id(categoryId);
     }
