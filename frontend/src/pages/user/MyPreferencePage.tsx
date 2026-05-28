@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ProductCard from "@/components/fragment/ProductCard";
+import PreferenceModal from "../../components/fragment/PreferenceModal";
 import {
   RotateCcw,
   SlidersHorizontal,
@@ -22,7 +23,7 @@ const allProducts: Product[] = [
     originalPrice: 499000,
     image:
       "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=400&q=80",
-    badge: "Terbaru",
+    badge: "Diskon",
     rating: 4.8,
     sold: 312,
     category: "Elektronik",
@@ -58,7 +59,7 @@ const allProducts: Product[] = [
     originalPrice: null,
     image:
       "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=400&q=80",
-    badge: "Terbaru",
+    badge: null,
     rating: 4.7,
     sold: 203,
     category: "Makanan & Minuman",
@@ -168,9 +169,27 @@ export default function MyPreferencePage() {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([
     "Semua",
   ]);
+  const [preferenceCategories, setPreferenceCategories] = useState<string[]>([
+    "Semua",
+  ]);
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState("newest");
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
+  const [preferenceModalOpen, setPreferenceModalOpen] = useState(false);
+
+  const categoryCounts = useMemo(
+    () =>
+      Object.fromEntries(
+        CATEGORIES.map((category) => [
+          category,
+          category === "Semua"
+            ? allProducts.length
+            : allProducts.filter((product) => product.category === category)
+                .length,
+        ]),
+      ) as Record<string, number>,
+    [],
+  );
 
   const filtered = useMemo(() => {
     let list = allProducts.filter((p) => {
@@ -229,6 +248,17 @@ export default function MyPreferencePage() {
     });
   };
 
+  const handleSavePreference = (value: string[]) => {
+    const nextValue = value.length > 0 ? value : ["Semua"];
+    setPreferenceCategories(nextValue);
+    setSelectedCategories(nextValue);
+    setPreferenceModalOpen(false);
+  };
+
+  const handleSkipPreference = () => {
+    setPreferenceModalOpen(false);
+  };
+
   return (
     <main className="min-h-screen bg-slate-50">
       <div className="mx-auto w-full max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
@@ -245,6 +275,25 @@ export default function MyPreferencePage() {
           />
           <span className="font-medium text-slate-700">Preferensi Saya</span>
         </nav>
+        <div className="mb-6 flex flex-col gap-3 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-100 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="text-sm font-semibold text-slate-900">
+              Preferensi kategori kamu
+            </p>
+            <p className="mt-1 text-sm text-slate-500">
+              {preferenceCategories.includes("Semua")
+                ? "Belum ada preferensi khusus, semua kategori ditampilkan."
+                : preferenceCategories.join(", ")}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setPreferenceModalOpen(true)}
+            className="inline-flex items-center justify-center rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-primary/80"
+          >
+            Atur Preferensi Kategori
+          </button>
+        </div>
         <div className="flex gap-6">
           <aside className="hidden w-[28%] shrink-0 lg:block">
             <div className="sticky top-24 rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-100">
@@ -392,6 +441,16 @@ export default function MyPreferencePage() {
           </div>
         </>
       )}
+
+      <PreferenceModal
+        isOpen={preferenceModalOpen}
+        categories={CATEGORIES}
+        categoryCounts={categoryCounts}
+        value={preferenceCategories}
+        onClose={() => setPreferenceModalOpen(false)}
+        onSkip={handleSkipPreference}
+        onSave={handleSavePreference}
+      />
     </main>
   );
 }

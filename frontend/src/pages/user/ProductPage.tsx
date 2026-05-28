@@ -22,7 +22,7 @@ const allProducts: Product[] = [
     originalPrice: 499000,
     image:
       "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=400&q=80",
-    badge: "Terbaru",
+    badge: "Diskon",
     rating: 4.8,
     sold: 312,
     category: "Elektronik",
@@ -58,7 +58,7 @@ const allProducts: Product[] = [
     originalPrice: null,
     image:
       "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=400&q=80",
-    badge: "Terbaru",
+    badge: null,
     rating: 4.7,
     sold: 203,
     category: "Makanan & Minuman",
@@ -91,10 +91,10 @@ const allProducts: Product[] = [
     id: 7,
     name: "Lampu LED Aesthetic",
     price: 79000,
-    originalPrice: 110000,
+    originalPrice: null,
     image:
       "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80",
-    badge: "Terbaru",
+    badge: null,
     rating: 4.6,
     sold: 278,
     category: "Rumah & Taman",
@@ -154,7 +154,7 @@ const allProducts: Product[] = [
     originalPrice: null,
     image:
       "https://images.unsplash.com/photo-1556228720-195a672e8a03?w=400&q=80",
-    badge: "Terbaru",
+    badge: null,
     rating: 4.6,
     sold: 523,
     category: "Kecantikan",

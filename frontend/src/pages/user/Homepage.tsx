@@ -116,7 +116,7 @@ const latestProducts = [
     originalPrice: 120000,
     image:
       "https://imgcdn.espos.id/@espos/images/2020/03/191219-ZAM-BISNIS-18-HEADSHOT-Kepala-Badan-Koordinasi-Penanaman-Modal-_BKPM_-Bahlil-Lahadalia-1_6599.jpg",
-    badge: null,
+    badge: "Diskon",
     rating: 4.9,
     sold: 455,
   },
@@ -214,7 +214,6 @@ export default function Homepage() {
           </div>
         </div>
       </section>
-
       <section className="mx-auto w-full max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="mb-6 flex items-end justify-between">
           <div>
@@ -239,7 +238,6 @@ export default function Homepage() {
           ))}
         </div>
       </section>
-
       <section className="mx-auto w-full max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
         <div className="mb-6 flex items-end justify-between">
           <div>
@@ -249,14 +247,11 @@ export default function Homepage() {
             <p className="text-2xl font-bold text-slate-600">Produk Terbaru</p>
           </div>
         </div>
-
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
           {latestProducts.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
         </div>
-
-        {/* Lihat semua */}
         <div className="mt-10 flex justify-center">
           <button
             onClick={() => navigate("/products")}
