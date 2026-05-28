@@ -22,4 +22,8 @@ public interface UserPromotionRepository extends JpaRepository<UserPromotion, Lo
     
     @Query("SELECT up.product.id FROM UserPromotion up WHERE up.user.id = :userId")
     List<Long> findProductIdsByUserId(@Param("userId") Long userId);
+
+
+    @Query("SELECT up.user.id FROM UserPromotion up WHERE up.product.id = :productId")
+    List<Long> findUserIdsByProductId(@Param("productId") Long productId);
 }

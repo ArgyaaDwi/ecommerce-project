@@ -12,6 +12,9 @@ import com.design_pattern_ecommerce.backend.models.ProductPromotion;
 import com.design_pattern_ecommerce.backend.models.ProductPromotionLog;
 import com.design_pattern_ecommerce.backend.models.User;
 import com.design_pattern_ecommerce.backend.models.UserPromotion;
+import com.design_pattern_ecommerce.backend.events.promotion.ProductPromotionSubject;
+import com.design_pattern_ecommerce.backend.events.promotion.PromotionEvent;
+import com.design_pattern_ecommerce.backend.events.promotion.PromotionEventType;
 import com.design_pattern_ecommerce.backend.repositories.ProductPromotionLogRepository;
 import com.design_pattern_ecommerce.backend.repositories.ProductPromotionRepository;
 import com.design_pattern_ecommerce.backend.repositories.UserPromotionRepository;
@@ -29,6 +32,9 @@ public class ProductPromotionService {
     private UserService userService;
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private ProductPromotionSubject productPromotionSubject;
 
 
     public List<ProductPromotion> getAllProductPromotions() {
@@ -117,6 +123,8 @@ public class ProductPromotionService {
         promotion.setIsActive(true);
         productPromotionRepository.save(promotion);
 
+        productPromotionSubject.notifySubscribers(PromotionEvent.fromPromotion(PromotionEventType.CREATED, promotion));
+
         return promotion;
     }
 
@@ -144,8 +152,13 @@ public class ProductPromotionService {
         ProductPromotion promotion = productPromotionRepository.findById((long) promotionId)
             .orElseThrow(() -> new RuntimeException("Promotion not found"));
 
+        boolean wasActive = Boolean.TRUE.equals(promotion.getIsActive());
         promotion.setIsActive(isActive);
         productPromotionRepository.save(promotion);
+
+        if (!wasActive && isActive) {
+            productPromotionSubject.notifySubscribers(PromotionEvent.fromPromotion(PromotionEventType.ACTIVATED, promotion));
+        }
     }
 }
 
