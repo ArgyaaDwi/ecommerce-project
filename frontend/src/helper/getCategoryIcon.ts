@@ -13,18 +13,13 @@ import type { LucideIcon } from "lucide-react";
 
 export const getCategoryIcon = (categoryName: string): LucideIcon => {
   const iconMap: Record<string, LucideIcon> = {
-    Elektronik: Laptop,
+    Electronics: Laptop,
     Fashion: Shirt,
-    Clothing: Shirt,
-    "Makanan & Minuman": UtensilsCrossed,
-    Kecantikan: Sparkles,
+    "Food and Drink": UtensilsCrossed,
     Beauty: Sparkles,
-    Olahraga: Dumbbell,
     Sports: Dumbbell,
-    "Rumah & Taman": Home,
     "Home & Garden": Home,
-    Otomotif: Car,
-    Buku: BookOpen,
+    Automotive: Car,
     Books: BookOpen,
   };
   return iconMap[categoryName] || Package;
