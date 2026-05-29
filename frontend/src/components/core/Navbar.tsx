@@ -15,6 +15,7 @@ const navItems = [
 
 const Navbar = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
   const [promoItems, setPromoItems] = useState<string[]>([]);
   const userMenuRef = useRef<HTMLDivElement | null>(null);
   const { sessionKey, isLoadingSession } = useSession();
@@ -89,14 +90,30 @@ const Navbar = () => {
   return (
     <header className="sticky top-0 z-40 border-b border-border/70 bg-white/95 backdrop-blur">
       <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between gap-4 py-3">
+        <div className="flex flex-wrap items-center justify-between gap-3 py-3 md:flex-nowrap md:gap-4">
           <div className="flex items-center gap-2">
             <span className="text-xl font-semibold tracking-wide text-slate-900">
               ini<span className="text-primary">Toko</span>
             </span>
           </div>
 
-          <nav className="flex-1">
+          <button
+            type="button"
+            onClick={() => setIsMobileNavOpen((prev) => !prev)}
+            className="ml-auto inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition hover:border-primary/30 hover:text-primary md:hidden"
+            aria-expanded={isMobileNavOpen}
+            aria-controls="mobile-navbar-links"
+            aria-label="Toggle navigation menu"
+          >
+            <span className="flex h-4 w-4 flex-col justify-between">
+              <span className="h-0.5 w-full rounded-full bg-current" />
+              <span className="h-0.5 w-full rounded-full bg-current" />
+              <span className="h-0.5 w-full rounded-full bg-current" />
+            </span>
+            Menu
+          </button>
+
+          <nav className="hidden flex-1 md:block">
             <div className="mx-auto flex w-fit items-center gap-1 rounded-lg bg-slate-100 p-1 shadow-sm">
               {navItems.map((item) => (
                 <NavLink
@@ -117,9 +134,10 @@ const Navbar = () => {
               ))}
             </div>
           </nav>
+
           <div
             ref={userMenuRef}
-            className="relative flex items-center justify-end"
+            className="relative order-2 flex items-center justify-end md:order-0"
           >
             <button
               type="button"
@@ -143,6 +161,32 @@ const Navbar = () => {
               />
             )}
           </div>
+
+          <nav
+            id="mobile-navbar-links"
+            className={`order-3 w-full md:hidden ${isMobileNavOpen ? "block" : "hidden"}`}
+          >
+            <div className="flex flex-col gap-2 rounded-xl border border-slate-200 bg-slate-50 p-2 shadow-sm">
+              {navItems.map((item) => (
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  end={item.to === "/"}
+                  onClick={() => setIsMobileNavOpen(false)}
+                  className={({ isActive }) =>
+                    [
+                      "rounded-lg px-4 py-3 text-sm font-medium transition-all duration-200",
+                      isActive
+                        ? "bg-primary text-white shadow-md shadow-primary/25"
+                        : "bg-white text-slate-600 hover:bg-slate-100 hover:text-slate-900",
+                    ].join(" ")
+                  }
+                >
+                  {item.label}
+                </NavLink>
+              ))}
+            </div>
+          </nav>
         </div>
       </div>
       <div className="overflow-hidden border-t border-slate-200/80 bg-slate-50 py-2">
