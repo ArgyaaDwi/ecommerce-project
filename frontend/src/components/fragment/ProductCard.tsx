@@ -32,7 +32,7 @@ const ProductCard = ({ product }: { product: Product }) => {
         />
       </div>
       <div className="flex flex-1 flex-col gap-2 p-4">
-        <span className="w-fit rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-slate-600">
+        <span className="w-fit rounded-full bg-slate-100 px-1.5 py-0.25 text-[9px] font-semibold uppercase tracking-wide text-slate-600">
           {categoryName}
         </span>
         <p className="line-clamp-2 text-sm font-medium leading-snug text-slate-800">

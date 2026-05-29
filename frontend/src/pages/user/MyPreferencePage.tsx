@@ -1,9 +1,11 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ProductCard from "@/components/fragment/ProductCard";
 import PreferenceModal from "../../components/fragment/PreferenceModal";
+import { useSession } from "@/hooks/useSession";
+import { API_URL } from "@/lib/utils";
 import {
   RotateCcw,
   SlidersHorizontal,
@@ -13,81 +15,15 @@ import {
   X,
   ChevronRight,
 } from "lucide-react";
-import type { Product } from "@/types/interface";
+import type {
+  ApiResponse,
+  CategoryApiItem,
+  CategoryFilterItem,
+  Product,
+  ProductApiItem,
+} from "@/types/interface";
 
-const allProducts: Product[] = [
-  {
-    id: 1,
-    name: "Wireless Earbuds Pro X1",
-    price: 349000,
-    originalPrice: 499000,
-    image:
-      "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=400&q=80",
-    badge: "Diskon",
-    rating: 4.8,
-    sold: 312,
-    category: "Elektronik",
-  },
-  {
-    id: 2,
-    name: "Sneakers Urban Run",
-    price: 289000,
-    originalPrice: null,
-    image:
-      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&q=80",
-    badge: null,
-    rating: 4.6,
-    sold: 87,
-    category: "Fashion",
-  },
-  {
-    id: 3,
-    name: "Tote Bag Canvas Premium",
-    price: 125000,
-    originalPrice: 175000,
-    image:
-      "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400&q=80",
-    badge: "Diskon",
-    rating: 4.9,
-    sold: 541,
-    category: "Fashion",
-  },
-  {
-    id: 4,
-    name: "Kopi Arabica Cold Brew",
-    price: 45000,
-    originalPrice: null,
-    image:
-      "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=400&q=80",
-    badge: null,
-    rating: 4.7,
-    sold: 203,
-    category: "Makanan & Minuman",
-  },
-  {
-    id: 5,
-    name: "Serum Vitamin C 30ml",
-    price: 189000,
-    originalPrice: 250000,
-    image:
-      "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=400&q=80",
-    badge: "Diskon",
-    rating: 4.8,
-    sold: 689,
-    category: "Kecantikan",
-  },
-];
-
-const CATEGORIES = [
-  "Semua",
-  "Elektronik",
-  "Fashion",
-  "Makanan & Minuman",
-  "Kecantikan",
-  "Olahraga",
-  "Rumah & Taman",
-  "Buku",
-];
+type PreferenceDetailResponse = ApiResponse<unknown>;
 
 const SORT_OPTIONS = [
   { value: "newest", label: "Terbaru" },
@@ -101,8 +37,27 @@ const SORT_OPTIONS = [
 const getProductCategoryName = (category: Product["category"]) =>
   typeof category === "string" ? category : category.name;
 
+const extractPreferenceIds = (rawData: unknown): number[] => {
+  if (!rawData || !Array.isArray(rawData)) return [];
+
+  const seen = new Set<number>();
+  return rawData
+    .map((item) => {
+      if (typeof item === "object" && item !== null) {
+        const categoryId = (item as { productCategory?: { id?: unknown } })
+          .productCategory?.id;
+        return typeof categoryId === "number" ? categoryId : null;
+      }
+      return null;
+    })
+    .filter(
+      (id): id is number =>
+        id !== null && !seen.has(id) && seen.add(id) !== undefined,
+    );
+};
 interface FilterContentProps {
   hasActiveFilter: boolean;
+  categories: CategoryFilterItem[];
   selectedCategories: string[];
   toggleCategory: (category: string) => void;
   resetFilters: () => void;
@@ -110,6 +65,7 @@ interface FilterContentProps {
 
 function FilterContent({
   hasActiveFilter,
+  categories,
   selectedCategories,
   toggleCategory,
   resetFilters,
@@ -134,11 +90,11 @@ function FilterContent({
           Kategori
         </p>
         <div className="flex flex-col gap-2 py-3">
-          {CATEGORIES.map((cat) => (
+          {categories.map((cat) => (
             <label
-              key={cat}
+              key={cat.id}
               className={`flex cursor-pointer items-center justify-between rounded-lg border px-3 py-2 text-sm transition-all duration-150 ${
-                selectedCategories.includes(cat)
+                selectedCategories.includes(cat.name)
                   ? "border-sky-300 bg-sky-100 text-primary"
                   : "border-slate-200 text-slate-600 hover:bg-slate-50"
               }`}
@@ -146,18 +102,16 @@ function FilterContent({
               <div className="flex items-center gap-3">
                 <input
                   type="checkbox"
-                  checked={selectedCategories.includes(cat)}
-                  onChange={() => toggleCategory(cat)}
+                  checked={selectedCategories.includes(cat.name)}
+                  onChange={() => toggleCategory(cat.name)}
                   className="h-4 w-4 rounded border-slate-300 accent-sky-500 focus:ring-primary"
                 />
-                <span className="font-medium">{cat}</span>
+                <span className="font-medium">{cat.name}</span>
               </div>
               <span
-                className={`text-xs ${selectedCategories.includes(cat) ? "text-primary" : "text-slate-400"}`}
+                className={`text-xs ${selectedCategories.includes(cat.name) ? "text-primary" : "text-slate-400"}`}
               >
-                {cat === "Semua"
-                  ? allProducts.length
-                  : allProducts.filter((p) => p.category === cat).length}
+                {cat.count}
               </span>
             </label>
           ))}
@@ -169,42 +123,200 @@ function FilterContent({
 
 export default function MyPreferencePage() {
   const navigate = useNavigate();
+  const { sessionKey, isLoadingSession } = useSession();
+  const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<CategoryFilterItem[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([
     "Semua",
   ]);
-  const [preferenceCategories, setPreferenceCategories] = useState<string[]>([
-    "Semua",
-  ]);
+  const [preferenceCategories, setPreferenceCategories] = useState<string[]>(
+    [],
+  );
+  const [preferenceCategoryIds, setPreferenceCategoryIds] = useState<number[]>(
+    [],
+  );
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState("newest");
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
   const [preferenceModalOpen, setPreferenceModalOpen] = useState(false);
+  const [preferenceModalKey, setPreferenceModalKey] = useState(0);
+  const [isLoadingData, setIsLoadingData] = useState(false);
+
+  const syncPreferenceState = (
+    preferenceIds: number[],
+    categoryPool: CategoryFilterItem[],
+  ) => {
+    const preferenceNames = preferenceIds
+      .map(
+        (categoryId) =>
+          categoryPool.find((category) => category.id === categoryId)?.name,
+      )
+      .filter((categoryName): categoryName is string => Boolean(categoryName));
+
+    setPreferenceCategoryIds(preferenceIds);
+    setPreferenceCategories(preferenceNames);
+    setSelectedCategories(
+      preferenceNames.length > 0 ? preferenceNames : ["Semua"],
+    );
+  };
+
+  useEffect(() => {
+    if (isLoadingSession || !sessionKey) return;
+
+    let isActive = true;
+
+    const fetchData = async () => {
+      setIsLoadingData(true);
+
+      try {
+        const [productRes, categoryRes, preferenceRes] = await Promise.all([
+          fetch(`${API_URL}/product/list`, {
+            headers: {
+              Authorization: `Bearer ${sessionKey}`,
+              "Content-Type": "application/json",
+            },
+          }),
+          fetch(`${API_URL}/product/category/list`, {
+            headers: {
+              Authorization: `Bearer ${sessionKey}`,
+              "Content-Type": "application/json",
+            },
+          }),
+          fetch(`${API_URL}/user/preference/detail`, {
+            headers: {
+              Authorization: `Bearer ${sessionKey}`,
+              "Content-Type": "application/json",
+            },
+          }),
+        ]);
+
+        const productJson = (await productRes.json()) as ApiResponse<
+          ProductApiItem[]
+        >;
+        const categoryJson = (await categoryRes.json()) as ApiResponse<
+          CategoryApiItem[]
+        >;
+        const preferenceJson =
+          (await preferenceRes.json()) as PreferenceDetailResponse;
+
+        if (!isActive) return;
+
+        const rawProducts = productJson.success ? productJson.data : [];
+        const formattedProducts: Product[] = rawProducts.map((product) => ({
+          id: product.id,
+          name: product.name,
+          price: product.price,
+          originalPrice: null,
+          image: product.imageUrl,
+          badge: null,
+          rating: product.rating,
+          sold: product.sold,
+          category: product.category.name,
+          description: product.description,
+          createdAt: product.createdAt,
+          isSubscribedPromotion: product.isSubscribedPromotion,
+        }));
+
+        const categorySource =
+          categoryJson.success && categoryJson.data.length > 0
+            ? categoryJson.data
+            : Array.from(
+                new Map(
+                  rawProducts.map((product) => [
+                    product.category.id,
+                    product.category,
+                  ]),
+                ).values(),
+              );
+
+        const formattedCategories: CategoryFilterItem[] = categorySource.map(
+          (category) => ({
+            id: category.id,
+            name: category.name,
+            count: formattedProducts.filter(
+              (product) =>
+                getProductCategoryName(product.category) === category.name,
+            ).length,
+          }),
+        );
+
+        const preferenceIds = preferenceJson.success
+          ? extractPreferenceIds(preferenceJson.data)
+          : [];
+
+        setProducts(formattedProducts);
+        setCategories(formattedCategories);
+        syncPreferenceState(preferenceIds, formattedCategories);
+      } catch (error) {
+        console.error("Gagal fetch data MyPreferencePage:", error);
+      } finally {
+        if (isActive) {
+          setIsLoadingData(false);
+        }
+      }
+    };
+
+    fetchData();
+
+    return () => {
+      isActive = false;
+    };
+  }, [sessionKey, isLoadingSession]);
 
   const categoryCounts = useMemo(
     () =>
       Object.fromEntries(
-        CATEGORIES.map((category) => [
-          category,
-          category === "Semua"
-            ? allProducts.length
-            : allProducts.filter(
-                (product) =>
-                  getProductCategoryName(product.category) === category,
-              ).length,
-        ]),
+        categories.map((category) => [category.name, category.count]),
       ) as Record<string, number>,
-    [],
+    [categories],
   );
 
+  const preferenceScopedProducts = useMemo(
+    () =>
+      preferenceCategories.length > 0
+        ? products.filter((product) =>
+            preferenceCategories.includes(
+              getProductCategoryName(product.category),
+            ),
+          )
+        : products,
+    [products, preferenceCategories],
+  );
+
+  const filterCategories = useMemo<CategoryFilterItem[]>(() => {
+    const visibleCategories =
+      preferenceCategories.length > 0
+        ? categories.filter((category) =>
+            preferenceCategories.includes(category.name),
+          )
+        : categories;
+
+    return [
+      {
+        id: 0,
+        name: "Semua",
+        count: preferenceScopedProducts.length,
+      },
+      ...visibleCategories,
+    ];
+  }, [categories, preferenceCategories, preferenceScopedProducts.length]);
+
   const filtered = useMemo(() => {
-    let list = allProducts.filter((p) => {
+    let list = preferenceScopedProducts.filter((product) => {
       if (
         !selectedCategories.includes("Semua") &&
-        !selectedCategories.includes(getProductCategoryName(p.category))
-      )
+        !selectedCategories.includes(getProductCategoryName(product.category))
+      ) {
         return false;
-      if (search && !p.name.toLowerCase().includes(search.toLowerCase()))
+      }
+
+      if (
+        search &&
+        !product.name.toLowerCase().includes(search.toLowerCase())
+      ) {
         return false;
+      }
+
       return true;
     });
 
@@ -228,13 +340,21 @@ export default function MyPreferencePage() {
         list = [...list].sort((a, b) => b.sold - a.sold);
         break;
     }
+
     return list;
-  }, [selectedCategories, search, sortBy]);
+  }, [preferenceScopedProducts, selectedCategories, search, sortBy]);
 
   const hasActiveFilter = !selectedCategories.includes("Semua");
 
   const resetFilters = () => {
-    setSelectedCategories(["Semua"]);
+    setSelectedCategories(
+      preferenceCategories.length > 0 ? preferenceCategories : ["Semua"],
+    );
+  };
+
+  const openPreferenceModal = () => {
+    setPreferenceModalKey((current) => current + 1);
+    setPreferenceModalOpen(true);
   };
 
   const toggleCategory = (category: string) => {
@@ -253,16 +373,65 @@ export default function MyPreferencePage() {
     });
   };
 
-  const handleSavePreference = (value: string[]) => {
-    const nextValue = value.length > 0 ? value : ["Semua"];
-    setPreferenceCategories(nextValue);
-    setSelectedCategories(nextValue);
-    setPreferenceModalOpen(false);
+  const handleSavePreference = async (value: string[]) => {
+    if (!sessionKey) return;
+
+    const nextCategoryNames = value.filter((category) => category !== "Semua");
+    const nextCategoryIds = categories
+      .filter((category) => nextCategoryNames.includes(category.name))
+      .map((category) => category.id);
+
+    try {
+      const response = await fetch(`${API_URL}/user/preference/update`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${sessionKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ categoryIds: nextCategoryIds }),
+      });
+
+      const result = (await response.json()) as ApiResponse<unknown>;
+
+      if (!result.success) {
+        throw new Error("Gagal menyimpan preferensi");
+      }
+
+      const detailRes = await fetch(`${API_URL}/user/preference/detail`, {
+        headers: {
+          Authorization: `Bearer ${sessionKey}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      const detailResult = (await detailRes.json()) as PreferenceDetailResponse;
+      const persistedIds = detailResult.success
+        ? extractPreferenceIds(detailResult.data)
+        : nextCategoryIds;
+
+      syncPreferenceState(persistedIds, categories);
+      setPreferenceModalOpen(false);
+    } catch (error) {
+      console.error("Gagal update preference:", error);
+    }
   };
 
   const handleSkipPreference = () => {
     setPreferenceModalOpen(false);
   };
+
+  const preferenceButtonLabel =
+    preferenceCategoryIds.length > 0
+      ? "Edit Preferensi Kategori"
+      : "Atur Preferensi Kategori";
+
+  if (isLoadingSession) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+        Tunggu ...
+      </div>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-slate-50">
@@ -286,17 +455,17 @@ export default function MyPreferencePage() {
               Preferensi kategori kamu
             </p>
             <p className="mt-1 text-sm text-slate-500">
-              {preferenceCategories.includes("Semua")
-                ? "Belum ada preferensi khusus, semua kategori ditampilkan."
-                : preferenceCategories.join(", ")}
+              {preferenceCategories.length > 0
+                ? preferenceCategories.join(", ")
+                : "Belum ada preferensi khusus, semua kategori ditampilkan."}
             </p>
           </div>
           <button
             type="button"
-            onClick={() => setPreferenceModalOpen(true)}
+            onClick={openPreferenceModal}
             className="inline-flex items-center justify-center rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-primary/80"
           >
-            Atur Preferensi Kategori
+            {preferenceButtonLabel}
           </button>
         </div>
         <div className="flex gap-6">
@@ -304,6 +473,7 @@ export default function MyPreferencePage() {
             <div className="sticky top-24 rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-100">
               <FilterContent
                 hasActiveFilter={hasActiveFilter}
+                categories={filterCategories}
                 selectedCategories={selectedCategories}
                 toggleCategory={toggleCategory}
                 resetFilters={resetFilters}
@@ -364,25 +534,35 @@ export default function MyPreferencePage() {
                 )}
               </div>
             </div>
-            <p className="mb-4 text-sm text-slate-400">
-              Menampilkan{" "}
-              <span className="font-semibold text-slate-700">
-                {filtered.length}
-              </span>{" "}
-              produk
-              {selectedCategories.length > 0 &&
-                selectedCategories[0] !== "Semua" && (
-                  <>
-                    {" "}
-                    di{" "}
-                    <span className="font-semibold text-primary">
-                      {selectedCategories.join(", ")}
-                    </span>
-                  </>
-                )}
-            </p>
+
+            {isLoadingData ? (
+              <div className="flex min-h-80 items-center justify-center rounded-2xl bg-white text-sm font-medium text-slate-500 ring-1 ring-slate-100">
+                Memuat produk...
+              </div>
+            ) : null}
+
+            <div className="my-4">
+              <p className="text-sm text-slate-400">
+                Menampilkan{" "}
+                <span className="font-semibold text-slate-700">
+                  {filtered.length}
+                </span>{" "}
+                produk
+                {selectedCategories.length > 0 &&
+                  selectedCategories[0] !== "Semua" && (
+                    <>
+                      {" "}
+                      di{" "}
+                      <span className="font-semibold text-primary">
+                        {selectedCategories.join(", ")}
+                      </span>
+                    </>
+                  )}
+              </p>
+            </div>
+
             {filtered.length > 0 ? (
-              <div className="grid grid-cols-2 gap-4 py-5 sm:grid-cols-3 xl:grid-cols-4">
+              <div className="grid grid-cols-2 gap-4 py-5 sm:grid-cols-3 xl:grid-cols-3">
                 {filtered.map((product) => (
                   <ProductCard key={product.id} product={product} />
                 ))}
@@ -413,6 +593,7 @@ export default function MyPreferencePage() {
           </div>
         </div>
       </div>
+
       {mobileFilterOpen && (
         <>
           <div
@@ -433,6 +614,7 @@ export default function MyPreferencePage() {
             </div>
             <FilterContent
               hasActiveFilter={hasActiveFilter}
+              categories={filterCategories}
               selectedCategories={selectedCategories}
               toggleCategory={toggleCategory}
               resetFilters={resetFilters}
@@ -448,8 +630,9 @@ export default function MyPreferencePage() {
       )}
 
       <PreferenceModal
+        key={preferenceModalKey}
         isOpen={preferenceModalOpen}
-        categories={CATEGORIES}
+        categories={categories.map((category) => category.name)}
         categoryCounts={categoryCounts}
         value={preferenceCategories}
         onClose={() => setPreferenceModalOpen(false)}

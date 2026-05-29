@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { X, Info } from "lucide-react";
 
 interface PreferenceModalProps {
@@ -23,7 +23,11 @@ const PreferenceModal = ({
   onSave,
 }: PreferenceModalProps) => {
   const [draft, setDraft] = useState<string[]>(value);
-
+  useEffect(() => {
+    if (isOpen) {
+      setDraft(value);
+    }
+  }, [isOpen, value]);
   const toggleDraftCategory = (category: string) => {
     setDraft((current) => {
       if (category === "Semua") {

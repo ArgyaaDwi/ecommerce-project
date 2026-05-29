@@ -1,8 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { NavLink } from "react-router-dom";
 import ModalUser from "../fragment/ModalUser";
+import { useSession } from "@/hooks/useSession";
+import { API_URL, formatPrice } from "@/lib/utils";
+import type { ApiResponse, PromotionApiItem } from "@/types/interface";
 
 const navItems = [
   { label: "Home", to: "/" },
@@ -10,17 +13,11 @@ const navItems = [
   { label: "Product", to: "/products" },
 ];
 
-const promoItems = [
-  "Promo hari ini: Gratis ongkir untuk minimal belanja Rp150.000",
-  "Diskon sampai 30% untuk produk pilihan",
-  "Cek update promo terbaru setiap hari",
-];
-
-const marqueeItems = [...promoItems, ...promoItems];
-
 const Navbar = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [promoItems, setPromoItems] = useState<string[]>([]);
   const userMenuRef = useRef<HTMLDivElement | null>(null);
+  const { sessionKey, isLoadingSession } = useSession();
 
   const user = {
     name: "Argya Awoakwoawk",
@@ -28,6 +25,48 @@ const Navbar = () => {
     avatarUrl: "/assets/images/user_img.png",
     role: "",
   };
+
+  useEffect(() => {
+    if (isLoadingSession) return;
+
+    const fetchPromotions = async () => {
+      try {
+        const res = await fetch(`${API_URL}/admin/promotion/list`, {
+          headers: {
+            "Content-Type": "application/json",
+            ...(sessionKey ? { Authorization: `Bearer ${sessionKey}` } : {}),
+          },
+        });
+
+        const result = (await res.json()) as ApiResponse<PromotionApiItem[]>;
+
+        if (!result.success) return;
+
+        const formattedItems = result.data
+          .filter((promotion) => promotion.isActive)
+          .map(
+            (promotion) =>
+              `${promotion.product.name} - ${promotion.description} - ${formatPrice(promotion.price)}`,
+          );
+
+        setPromoItems(
+          formattedItems.length > 0
+            ? [...formattedItems, ...formattedItems]
+            : ["Belum ada promo aktif saat ini"],
+        );
+      } catch (error) {
+        console.error("Gagal fetch promo navbar:", error);
+        setPromoItems(["Gagal memuat promo saat ini"]);
+      }
+    };
+
+    fetchPromotions();
+  }, [sessionKey, isLoadingSession]);
+
+  const marqueeItems = useMemo(
+    () => (promoItems.length > 0 ? promoItems : ["Memuat promo..."]),
+    [promoItems],
+  );
 
   useEffect(() => {
     if (!isModalOpen) return;
@@ -107,7 +146,7 @@ const Navbar = () => {
         </div>
       </div>
       <div className="overflow-hidden border-t border-slate-200/80 bg-slate-50 py-2">
-        <div className="animate-[marquee_28s_linear_infinite] flex w-max items-center gap-10 whitespace-nowrap px-6 text-sm font-medium text-amber-500">
+        <div className="animate-[marquee_28s_linear_infinite] flex w-max items-center gap-10 whitespace-nowrap px-6 text-sm font-medium text-amber-500 will-change-transform">
           {marqueeItems.map((item, index) => (
             <span key={`${item}-${index}`} className="shrink-0">
               {item}

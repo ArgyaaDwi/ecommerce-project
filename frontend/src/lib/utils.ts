@@ -7,3 +7,7 @@ export const formatPrice = (price: number) =>
 
 export const discount = (orig: number, price: number) =>
   Math.round(((orig - price) / orig) * 100);
+
+export const API_URL = import.meta.env.DEV
+  ? "/api"
+  : import.meta.env.VITE_API_URL;

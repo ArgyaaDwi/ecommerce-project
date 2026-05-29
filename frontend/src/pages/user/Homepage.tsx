@@ -3,134 +3,26 @@ import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import ProductCard from "@/components/fragment/ProductCard";
 import { banners } from "@/data/dummy/banners";
-
-import {
-  Laptop,
-  Shirt,
-  UtensilsCrossed,
-  Sparkles,
-  Dumbbell,
-  Home,
-  Car,
-  BookOpen,
-} from "lucide-react";
+import { useSession } from "@/hooks/useSession";
+import { API_URL } from "@/lib/utils";
+import { ArrowRight, ArrowLeft } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import type {
+  Product,
+  ApiResponse,
+  ProductApiItem,
+  CategoryApiItem,
+} from "@/types/interface";
+import { getCategoryIcon } from "@/helper/getCategoryIcon";
 
-const categories: {
-  id: number;
-  name: string;
-  icon: LucideIcon;
-  count: number;
-}[] = [
-  { id: 1, name: "Elektronik", icon: Laptop, count: 1240 },
-  { id: 2, name: "Fashion", icon: Shirt, count: 3850 },
-  { id: 3, name: "Makanan & Minuman", icon: UtensilsCrossed, count: 920 },
-  { id: 4, name: "Kecantikan", icon: Sparkles, count: 2100 },
-  { id: 5, name: "Olahraga", icon: Dumbbell, count: 670 },
-  { id: 6, name: "Rumah & Taman", icon: Home, count: 1530 },
-  { id: 7, name: "Otomotif", icon: Car, count: 440 },
-  { id: 8, name: "Buku", icon: BookOpen, count: 810 },
-];
-const latestProducts = [
-  {
-    id: 1,
-    name: "Wireless Earbuds Pro X1",
-    price: 349000,
-    originalPrice: 499000,
-    image:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Bahlil_Lahadalia_at_the_Indonesia_Naik_Kelas_book_launching%2C_21_November_2025_24_%28cropped%29.jpg/250px-Bahlil_Lahadalia_at_the_Indonesia_Naik_Kelas_book_launching%2C_21_November_2025_24_%28cropped%29.jpg",
-    badge: null,
-    rating: 4.8,
-    sold: 312,
-    category: "Elektronik",
-  },
-  {
-    id: 2,
-    name: "Sneakers Urban Run",
-    price: 289000,
-    originalPrice: null,
-    image:
-      "https://sultranesia.com/wp-content/uploads/2025/09/67c6a70245c01.jpg",
-    badge: null,
-    rating: 4.6,
-    sold: 87,
-    category: "Fashion",
-  },
-  {
-    id: 3,
-    name: "Tote Bag Canvas Premium",
-    price: 125000,
-    originalPrice: 175000,
-    image:
-      "https://satujabar.com/wp-content/uploads/2024/08/Bahlil-Lahadalia.jpg",
-    badge: "Diskon",
-    rating: 4.9,
-    sold: 541,
-    category: "Fashion",
-  },
-  {
-    id: 4,
-    name: "Kopi Arabica Cold Brew",
-    price: 45000,
-    originalPrice: null,
-    image:
-      "https://cdn.antaranews.com/cache/1200x800/2026/04/06/WhatsApp-Image-2026-04-06-at-13.56.13.jpeg",
-    badge: null,
-    rating: 4.7,
-    sold: 203,
-    category: "Makanan & Minuman",
-  },
-  {
-    id: 5,
-    name: "Serum Vitamin C 30ml",
-    price: 189000,
-    originalPrice: 250000,
-    image:
-      "https://cdn-jjmn.jawapos.com/images/4/2025/06/25/BAHLIL-LAHADIA-1222435210.jpg",
-    badge: "Diskon",
-    rating: 4.8,
-    sold: 689,
-    category: "Kecantikan",
-  },
-  {
-    id: 6,
-    name: "Yoga Mat Anti-Slip",
-    price: 215000,
-    originalPrice: null,
-    image:
-      "https://asset.kompas.com/crops/3yxbBJ5Re-WbhZV0Va06Kp1ar-w=/500x335:4500x3002/1200x800/data/photo/2025/10/28/6900cd55dace1.jpg",
-    badge: null,
-    rating: 4.5,
-    sold: 134,
-    category: "Olahraga",
-  },
-  {
-    id: 7,
-    name: "Lampu LED Aesthetic",
-    price: 79000,
-    originalPrice: null,
-    image:
-      "https://img2.beritasatu.com/cache/investor/480x310-3/1669735189.jpeg",
-    badge: null,
-    rating: 4.6,
-    sold: 278,
-    category: "Rumah & Taman",
-  },
-  {
-    id: 8,
-    name: "Buku Atomic Habits",
-    price: 98000,
-    originalPrice: 120000,
-    image:
-      "https://imgcdn.espos.id/@espos/images/2020/03/191219-ZAM-BISNIS-18-HEADSHOT-Kepala-Badan-Koordinasi-Penanaman-Modal-_BKPM_-Bahlil-Lahadalia-1_6599.jpg",
-    badge: "Diskon",
-    rating: 4.9,
-    sold: 455,
-    category: "Buku",
-  },
-];
 export default function Homepage() {
   const navigate = useNavigate();
+  const { sessionKey, isLoadingSession } = useSession();
+  const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<
+    { id: number; name: string; icon: LucideIcon; count: number }[]
+  >([]);
+
   const [current, setCurrent] = useState(0);
   const [paused, setPaused] = useState(false);
 
@@ -146,6 +38,70 @@ export default function Homepage() {
     const t = setInterval(next, 2500);
     return () => clearInterval(t);
   }, [paused, next]);
+
+  useEffect(() => {
+    if (isLoadingSession || !sessionKey) return;
+    const fetchData = async () => {
+      try {
+        const [productRes, categoryRes] = await Promise.all([
+          fetch(`${API_URL}/product/list`, {
+            headers: {
+              Authorization: `Bearer ${sessionKey}`,
+              "Content-Type": "application/json",
+            },
+          }),
+          fetch(`${API_URL}/product/category/list`, {
+            headers: {
+              Authorization: `Bearer ${sessionKey}`,
+              "Content-Type": "application/json",
+            },
+          }),
+        ]);
+
+        const productJson = (await productRes.json()) as ApiResponse<
+          ProductApiItem[]
+        >;
+        const categoryJson = (await categoryRes.json()) as ApiResponse<
+          CategoryApiItem[]
+        >;
+
+        if (productJson.success) {
+          const top8Products = productJson.data.slice(0, 8);
+          const formattedProducts: Product[] = top8Products.map((product) => ({
+            ...product,
+            image: product.imageUrl,
+            category: product.category.name,
+          }));
+          setProducts(formattedProducts);
+
+          if (categoryJson.success) {
+            const formattedCategories = categoryJson.data.map((category) => ({
+              id: category.id,
+              name: category.name,
+              icon: getCategoryIcon(category.name),
+              count: productJson.data.filter(
+                (product) => product.category.name === category.name,
+              ).length,
+            }));
+
+            setCategories(formattedCategories);
+          }
+        }
+      } catch (error) {
+        console.error("Gagal fetch data Homepage:", error);
+      }
+    };
+
+    fetchData();
+  }, [sessionKey, isLoadingSession]);
+
+  if (isLoadingSession) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        Tunggu ...
+      </div>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-slate-50">
@@ -190,23 +146,15 @@ export default function Homepage() {
             ))}
           </div>
           {[
-            { fn: prev, side: "left-4", icon: "M15 19l-7-7 7-7" },
-            { fn: next, side: "right-4", icon: "M9 5l7 7-7 7" },
-          ].map(({ fn, side, icon }) => (
+            { fn: prev, side: "left-4", Icon: ArrowLeft },
+            { fn: next, side: "right-4", Icon: ArrowRight },
+          ].map(({ fn, side, Icon }) => (
             <button
               key={side}
               onClick={fn}
               className={`absolute top-1/2 ${side} -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm transition hover:bg-white/40`}
             >
-              <svg
-                className="h-5 w-5 text-white"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={2.5}
-                viewBox="0 0 24 24"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" d={icon} />
-              </svg>
+              <Icon className="h-5 w-5 text-white" strokeWidth={2.5} />
             </button>
           ))}
           <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 gap-2">
@@ -222,6 +170,7 @@ export default function Homepage() {
           </div>
         </div>
       </section>
+
       <section className="mx-auto w-full max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="mb-6 flex items-end justify-between">
           <div>
@@ -255,30 +204,23 @@ export default function Homepage() {
             <p className="text-2xl font-bold text-slate-600">Produk Terbaru</p>
           </div>
         </div>
+
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-          {latestProducts.map((product) => (
+          {products.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
         </div>
+
         <div className="mt-10 flex justify-center">
           <button
             onClick={() => navigate("/products")}
             className="group flex items-center gap-2 rounded-lg border-2 border-primary px-8 py-3 text-sm font-semibold text-primary transition-all duration-200 hover:bg-primary hover:text-white active:scale-95"
           >
-            Lihat Semua Produk
-            <svg
+            Liat Semua Produk
+            <ArrowRight
               className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1"
-              fill="none"
-              stroke="currentColor"
               strokeWidth={2.5}
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M13 7l5 5m0 0l-5 5m5-5H6"
-              />
-            </svg>
+            />
           </button>
         </div>
       </section>
