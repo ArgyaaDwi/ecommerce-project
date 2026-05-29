@@ -217,6 +217,9 @@ const SORT_OPTIONS = [
   { value: "sold", label: "Terlaris" },
 ];
 
+const getProductCategoryName = (category: Product["category"]) =>
+  typeof category === "string" ? category : category.name;
+
 interface FilterContentProps {
   hasActiveFilter: boolean;
   selectedCategories: string[];
@@ -296,7 +299,7 @@ export default function ProductPage() {
     let list = allProducts.filter((p) => {
       if (
         !selectedCategories.includes("Semua") &&
-        !selectedCategories.includes(p.category)
+        !selectedCategories.includes(getProductCategoryName(p.category))
       )
         return false;
       if (search && !p.name.toLowerCase().includes(search.toLowerCase()))

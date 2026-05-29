@@ -3,6 +3,12 @@ import { formatPrice, discount } from "@/lib/utils";
 import StarRating from "./StarRating";
 
 const ProductCard = ({ product }: { product: Product }) => {
+  const imageSrc = product.image ?? product.imageUrl ?? "";
+  const categoryName =
+    typeof product.category === "string"
+      ? product.category
+      : product.category.name;
+
   return (
     <div className="group relative flex flex-col overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-100 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-primary/10 hover:ring-primary/20">
       {product.badge && (
@@ -20,12 +26,15 @@ const ProductCard = ({ product }: { product: Product }) => {
       )}
       <div className="relative aspect-square overflow-hidden bg-slate-50">
         <img
-          src={product.image}
+          src={imageSrc}
           alt={product.name}
           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
       </div>
       <div className="flex flex-1 flex-col gap-2 p-4">
+        <span className="w-fit rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-slate-600">
+          {categoryName}
+        </span>
         <p className="line-clamp-2 text-sm font-medium leading-snug text-slate-800">
           {product.name}
         </p>

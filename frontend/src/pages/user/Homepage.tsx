@@ -42,6 +42,7 @@ const latestProducts = [
     badge: null,
     rating: 4.8,
     sold: 312,
+    category: "Elektronik",
   },
   {
     id: 2,
@@ -53,6 +54,7 @@ const latestProducts = [
     badge: null,
     rating: 4.6,
     sold: 87,
+    category: "Fashion",
   },
   {
     id: 3,
@@ -64,6 +66,7 @@ const latestProducts = [
     badge: "Diskon",
     rating: 4.9,
     sold: 541,
+    category: "Fashion",
   },
   {
     id: 4,
@@ -75,6 +78,7 @@ const latestProducts = [
     badge: null,
     rating: 4.7,
     sold: 203,
+    category: "Makanan & Minuman",
   },
   {
     id: 5,
@@ -86,6 +90,7 @@ const latestProducts = [
     badge: "Diskon",
     rating: 4.8,
     sold: 689,
+    category: "Kecantikan",
   },
   {
     id: 6,
@@ -97,6 +102,7 @@ const latestProducts = [
     badge: null,
     rating: 4.5,
     sold: 134,
+    category: "Olahraga",
   },
   {
     id: 7,
@@ -108,6 +114,7 @@ const latestProducts = [
     badge: null,
     rating: 4.6,
     sold: 278,
+    category: "Rumah & Taman",
   },
   {
     id: 8,
@@ -119,6 +126,7 @@ const latestProducts = [
     badge: "Diskon",
     rating: 4.9,
     sold: 455,
+    category: "Buku",
   },
 ];
 export default function Homepage() {
