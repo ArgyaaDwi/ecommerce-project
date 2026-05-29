@@ -21,6 +21,7 @@ import type {
   CategoryFilterItem,
   Product,
   ProductApiItem,
+  PromotionApiItem,
 } from "@/types/interface";
 
 type PreferenceDetailResponse = ApiResponse<unknown>;
@@ -169,26 +170,33 @@ export default function MyPreferencePage() {
       setIsLoadingData(true);
 
       try {
-        const [productRes, categoryRes, preferenceRes] = await Promise.all([
-          fetch(`${API_URL}/product/list`, {
-            headers: {
-              Authorization: `Bearer ${sessionKey}`,
-              "Content-Type": "application/json",
-            },
-          }),
-          fetch(`${API_URL}/product/category/list`, {
-            headers: {
-              Authorization: `Bearer ${sessionKey}`,
-              "Content-Type": "application/json",
-            },
-          }),
-          fetch(`${API_URL}/user/preference/detail`, {
-            headers: {
-              Authorization: `Bearer ${sessionKey}`,
-              "Content-Type": "application/json",
-            },
-          }),
-        ]);
+        const [productRes, categoryRes, preferenceRes, promotionRes] =
+          await Promise.all([
+            fetch(`${API_URL}/product/list`, {
+              headers: {
+                Authorization: `Bearer ${sessionKey}`,
+                "Content-Type": "application/json",
+              },
+            }),
+            fetch(`${API_URL}/product/category/list`, {
+              headers: {
+                Authorization: `Bearer ${sessionKey}`,
+                "Content-Type": "application/json",
+              },
+            }),
+            fetch(`${API_URL}/user/preference/detail`, {
+              headers: {
+                Authorization: `Bearer ${sessionKey}`,
+                "Content-Type": "application/json",
+              },
+            }),
+            fetch(`${API_URL}/admin/promotion/list`, {
+              headers: {
+                Authorization: `Bearer ${sessionKey}`,
+                "Content-Type": "application/json",
+              },
+            }),
+          ]);
 
         const productJson = (await productRes.json()) as ApiResponse<
           ProductApiItem[]
@@ -198,17 +206,34 @@ export default function MyPreferencePage() {
         >;
         const preferenceJson =
           (await preferenceRes.json()) as PreferenceDetailResponse;
+        const promotionJson = (await promotionRes.json()) as ApiResponse<
+          PromotionApiItem[]
+        >;
 
         if (!isActive) return;
+
+        const promotionByProductId = new Map<number, PromotionApiItem>();
+
+        if (promotionJson.success) {
+          promotionJson.data.forEach((promotion) => {
+            if (promotion.isActive) {
+              promotionByProductId.set(promotion.product.id, promotion);
+            }
+          });
+        }
 
         const rawProducts = productJson.success ? productJson.data : [];
         const formattedProducts: Product[] = rawProducts.map((product) => ({
           id: product.id,
           name: product.name,
-          price: product.price,
-          originalPrice: null,
+          price: promotionByProductId.has(product.id)
+            ? promotionByProductId.get(product.id)!.price
+            : product.price,
+          originalPrice: promotionByProductId.has(product.id)
+            ? product.price
+            : null,
           image: product.imageUrl,
-          badge: null,
+          badge: promotionByProductId.has(product.id) ? "Diskon" : null,
           rating: product.rating,
           sold: product.sold,
           category: product.category.name,
@@ -380,6 +405,10 @@ export default function MyPreferencePage() {
     const nextCategoryIds = categories
       .filter((category) => nextCategoryNames.includes(category.name))
       .map((category) => category.id);
+
+    console.log("draft value:", value);
+    console.log("nextCategoryNames:", nextCategoryNames);
+    console.log("nextCategoryIds:", nextCategoryIds);
 
     try {
       const response = await fetch(`${API_URL}/user/preference/update`, {

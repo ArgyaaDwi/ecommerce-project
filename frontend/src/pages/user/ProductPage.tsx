@@ -178,8 +178,8 @@ export default function ProductPage() {
                 image: product.imageUrl,
                 category: product.category.name,
                 badge: activePromotion ? "Diskon" : null,
-                originalPrice: activePromotion ? activePromotion.price : null,
-                price: product.price,
+                originalPrice: activePromotion ? product.price : null,
+                price: activePromotion ? activePromotion.price : product.price,
               };
             },
           );
