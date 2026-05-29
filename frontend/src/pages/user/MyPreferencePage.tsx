@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 import ProductCard from "@/components/fragment/ProductCard";
 import PreferenceModal from "../../components/fragment/PreferenceModal";
 import { useSession } from "@/hooks/useSession";
@@ -142,6 +143,9 @@ export default function MyPreferencePage() {
   const [preferenceModalOpen, setPreferenceModalOpen] = useState(false);
   const [preferenceModalKey, setPreferenceModalKey] = useState(0);
   const [isLoadingData, setIsLoadingData] = useState(false);
+  const [promotionActionProductId, setPromotionActionProductId] = useState<
+    number | null
+  >(null);
 
   const syncPreferenceState = (
     preferenceIds: number[],
@@ -288,6 +292,73 @@ export default function MyPreferencePage() {
     };
   }, [sessionKey, isLoadingSession]);
 
+  const handleToggleSubscription = async (product: Product) => {
+    if (!sessionKey) return;
+
+    const isSubscribed = Boolean(product.isSubscribedPromotion);
+    const action = isSubscribed ? "unsubscribe" : "subscribe";
+
+    const confirmResult = await Swal.fire({
+      title: isSubscribed ? "Hapus langganan promo?" : "Subscribe promo?",
+      text: isSubscribed
+        ? `Kamu akan berhenti menerima notifikasi promo untuk ${product.name}.`
+        : `Kamu akan menerima notifikasi promo untuk ${product.name}.`,
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: isSubscribed ? "Unsubscribe" : "Subscribe",
+      cancelButtonText: "Batal",
+      confirmButtonColor: isSubscribed ? "#0f766e" : "#2563eb",
+    });
+
+    if (!confirmResult.isConfirmed) return;
+
+    setPromotionActionProductId(product.id);
+
+    try {
+      const res = await fetch(`${API_URL}/promotion/${action}`, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${sessionKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ productId: product.id }),
+      });
+
+      const result = (await res.json()) as ApiResponse<unknown>;
+
+      if (!result.success) {
+        throw new Error("Gagal memperbarui langganan promo");
+      }
+
+      setProducts((current) =>
+        current.map((item) =>
+          item.id === product.id
+            ? { ...item, isSubscribedPromotion: !isSubscribed }
+            : item,
+        ),
+      );
+
+      await Swal.fire({
+        icon: "success",
+        title: isSubscribed ? "Unsubscribed" : "Subscribed",
+        text: isSubscribed
+          ? "Notifikasi promo sudah dimatikan."
+          : "Notifikasi promo sudah diaktifkan.",
+        confirmButtonText: "OK",
+      });
+    } catch (error) {
+      console.error("Gagal toggle promo subscription:", error);
+      await Swal.fire({
+        icon: "error",
+        title: "Gagal",
+        text: "Tidak bisa mengubah status langganan promo.",
+        confirmButtonText: "Tutup",
+      });
+    } finally {
+      setPromotionActionProductId(null);
+    }
+  };
+
   const categoryCounts = useMemo(
     () =>
       Object.fromEntries(
@@ -406,24 +477,25 @@ export default function MyPreferencePage() {
       .filter((category) => nextCategoryNames.includes(category.name))
       .map((category) => category.id);
 
-    console.log("draft value:", value);
-    console.log("nextCategoryNames:", nextCategoryNames);
-    console.log("nextCategoryIds:", nextCategoryIds);
-
     try {
-      const response = await fetch(`${API_URL}/user/preference/update`, {
+      await fetch(`${API_URL}/user/preference/update`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${sessionKey}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ categoryIds: nextCategoryIds }),
+        body: JSON.stringify({ categoryIds: [] }),
       });
 
-      const result = (await response.json()) as ApiResponse<unknown>;
-
-      if (!result.success) {
-        throw new Error("Gagal menyimpan preferensi");
+      if (nextCategoryIds.length > 0) {
+        await fetch(`${API_URL}/user/preference/update`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${sessionKey}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ categoryIds: nextCategoryIds }),
+        });
       }
 
       const detailRes = await fetch(`${API_URL}/user/preference/detail`, {
@@ -440,6 +512,13 @@ export default function MyPreferencePage() {
 
       syncPreferenceState(persistedIds, categories);
       setPreferenceModalOpen(false);
+
+      await Swal.fire({
+        icon: "success",
+        title: "Berhasil",
+        text: "Preferensi kamu berhasil diubah.",
+        confirmButtonText: "OK",
+      });
     } catch (error) {
       console.error("Gagal update preference:", error);
     }
@@ -593,7 +672,14 @@ export default function MyPreferencePage() {
             {filtered.length > 0 ? (
               <div className="grid grid-cols-2 gap-4 py-5 sm:grid-cols-3 xl:grid-cols-3">
                 {filtered.map((product) => (
-                  <ProductCard key={product.id} product={product} />
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    onToggleSubscription={handleToggleSubscription}
+                    isSubscriptionActionLoading={
+                      promotionActionProductId === product.id
+                    }
+                  />
                 ))}
               </div>
             ) : (
