@@ -6,7 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -90,6 +92,21 @@ public class AdminProductPromotionController {
         }
     }
 
+    @DeleteMapping("/delete/{promotionId}")
+    public ResponseEntity<ApiResponse<Void>> deleteAdminPromotion(@PathVariable int promotionId) {
+        try {
+
+            productPromotionService.deletePromotion(promotionId);
+
+            return new ResponseEntity<>(
+                    new ApiResponse<>(true, "Successfully deleted product promotion", null),
+                    HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(
+                    new ApiResponse<>(false, "Failed to delete product promotion: " + e.getMessage(), null),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
 
 class UpdateProductPromotionRequest {

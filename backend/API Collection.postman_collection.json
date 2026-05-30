@@ -486,6 +486,35 @@
 							"response": []
 						},
 						{
+							"name": "Delete Promotion",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"productId\" : 1,\r\n    \"promotionName\" : \"Pocong\",\r\n    \"price\": 400000,\r\n    \"description\": \"pocongan harga\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BaseUrl}}/admin/promotion/delete/",
+									"host": [
+										"{{BaseUrl}}"
+									],
+									"path": [
+										"admin",
+										"promotion",
+										"delete",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
 							"name": "Update Promotion (Active/Inactive)",
 							"request": {
 								"method": "PUT",

@@ -160,5 +160,13 @@ public class ProductPromotionService {
             productPromotionSubject.notifySubscribers(PromotionEvent.fromPromotion(PromotionEventType.ACTIVATED, promotion));
         }
     }
+
+    @Transactional
+    public void deletePromotion(int promotionId) {
+        ProductPromotion promotion = productPromotionRepository.findById((long) promotionId)
+            .orElseThrow(() -> new RuntimeException("Promotion not found"));
+
+        productPromotionRepository.delete(promotion);
+    }
 }
 
