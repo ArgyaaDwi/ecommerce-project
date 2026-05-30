@@ -1,6 +1,7 @@
 export interface ProductCategory {
   id: number;
   name: string;
+  createdAt: string;
 }
 
 export interface Product {

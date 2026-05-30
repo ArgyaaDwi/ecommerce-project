@@ -6,7 +6,7 @@ import Swal from "sweetalert2";
 import ProductCard from "@/components/fragment/ProductCard";
 import PreferenceModal from "../../components/fragment/PreferenceModal";
 import { useSession } from "@/hooks/useSession";
-import { API_URL } from "@/lib/utils";
+import { API_URL, getProductCategoryName } from "@/lib/utils";
 import {
   RotateCcw,
   SlidersHorizontal,
@@ -35,9 +35,6 @@ const SORT_OPTIONS = [
   { value: "rating", label: "Rating Tertinggi" },
   { value: "sold", label: "Terlaris" },
 ];
-
-const getProductCategoryName = (category: Product["category"]) =>
-  typeof category === "string" ? category : category.name;
 
 const extractPreferenceIds = (rawData: unknown): number[] => {
   if (!rawData || !Array.isArray(rawData)) return [];
@@ -529,9 +526,7 @@ export default function MyPreferencePage() {
   };
 
   const preferenceButtonLabel =
-    preferenceCategoryIds.length > 0
-      ? "Edit Preferensi Kategori"
-      : "Atur Preferensi Kategori";
+    preferenceCategoryIds.length > 0 ? "Edit Preferensi" : "Atur Preferensi";
 
   if (isLoadingSession) {
     return (
@@ -560,7 +555,7 @@ export default function MyPreferencePage() {
         <div className="mb-6 flex flex-col gap-3 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-100 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p className="text-sm font-semibold text-slate-900">
-              Preferensi kategori kamu
+              Preferensi kamu
             </p>
             <p className="mt-1 text-sm text-slate-500">
               {preferenceCategories.length > 0

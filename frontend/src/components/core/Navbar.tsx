@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { NavLink } from "react-router-dom";
 import ModalUser from "../fragment/ModalUser";
 import { useSession } from "@/hooks/useSession";
-import { API_URL, formatPrice } from "@/lib/utils";
+import { API_URL, formatCurrency } from "@/lib/utils";
 import type { ApiResponse, PromotionApiItem } from "@/types/interface";
 
 const navItems = [
@@ -47,7 +47,7 @@ const Navbar = () => {
           .filter((promotion) => promotion.isActive)
           .map(
             (promotion) =>
-              `${promotion.product.name} - ${promotion.description} - ${formatPrice(promotion.price)}`,
+              `${promotion.product.name} - ${promotion.description} - ${formatCurrency(promotion.price)}`,
           );
 
         setPromoItems(

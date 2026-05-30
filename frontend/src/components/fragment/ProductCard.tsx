@@ -1,6 +1,6 @@
 import type { Product } from "@/types/interface";
 import { Bell, BellOff, Loader2 } from "lucide-react";
-import { formatPrice, discount } from "@/lib/utils";
+import { formatCurrency , discount } from "@/lib/utils";
 import StarRating from "./StarRating";
 
 interface ProductCardProps {
@@ -82,11 +82,11 @@ const ProductCard = ({
         <div className="mt-auto flex flex-col gap-0.5">
           {product.originalPrice && (
             <span className="text-xs text-red-500 line-through">
-              {formatPrice(product.originalPrice)}
+              {formatCurrency(product.originalPrice)}
             </span>
           )}
           <span className="text-base font-bold text-black">
-            {formatPrice(product.price)}
+            {formatCurrency(product.price)}
           </span>
         </div>
         <p className="text-xs text-slate-400">{product.sold} terjual</p>

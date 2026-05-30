@@ -216,7 +216,7 @@ export default function Homepage() {
             onClick={() => navigate("/products")}
             className="group flex items-center gap-2 rounded-lg border-2 border-primary px-8 py-3 text-sm font-semibold text-primary transition-all duration-200 hover:bg-primary hover:text-white active:scale-95"
           >
-            Liat Semua Produk
+            Lihat Semua Produk
             <ArrowRight
               className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1"
               strokeWidth={2.5}

@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import ProductCard from "@/components/fragment/ProductCard";
 import { useSession } from "@/hooks/useSession";
-import { API_URL } from "@/lib/utils";
+import { API_URL, getProductCategoryName } from "@/lib/utils";
 import {
   RotateCcw,
   SlidersHorizontal,
@@ -32,9 +32,6 @@ const SORT_OPTIONS = [
   { value: "rating", label: "Rating Tertinggi" },
   { value: "sold", label: "Terlaris" },
 ];
-
-const getProductCategoryName = (category: Product["category"]) =>
-  typeof category === "string" ? category : category.name;
 
 interface FilterContentProps {
   hasActiveFilter: boolean;
