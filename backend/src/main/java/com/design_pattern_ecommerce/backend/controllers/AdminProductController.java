@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,8 +16,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.design_pattern_ecommerce.backend.models.Product;
+import com.design_pattern_ecommerce.backend.models.ProductCategory;
 import com.design_pattern_ecommerce.backend.models.ProductPromotion;
+import com.design_pattern_ecommerce.backend.services.ProductCategoryService;
 import com.design_pattern_ecommerce.backend.services.ProductService;
+import com.design_pattern_ecommerce.backend.repositories.ProductCategoryRepository;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.validation.Valid;
@@ -31,6 +35,10 @@ public class AdminProductController {
     
     @Autowired
     private ProductService productService;
+    @Autowired
+    private ProductCategoryRepository productCategoryRepository;
+    @Autowired
+    private ProductCategoryService productCategoryService;
 
     @GetMapping("/list")
     public ResponseEntity<ApiResponse<List<Product>>> listProducts() {
@@ -106,6 +114,93 @@ public class AdminProductController {
             return ResponseEntity.ok(new ApiResponse<>(true, "Product updated successfully", product));
         } catch (Exception e) {
             return ResponseEntity.status(500).body(new ApiResponse<>(false, "Failed to update product: " + e.getMessage(), null));
+        }
+    }
+
+    // list all product categories
+    @GetMapping("/category/list")
+    public ResponseEntity<ApiResponse<List<ProductCategory>>> getAllCategories() {
+        try {
+            List<ProductCategory> categories = productCategoryRepository.findAll();
+
+            return new ResponseEntity<>(
+                new ApiResponse<>(true, "Categories retrieved successfully", categories),
+                HttpStatus.OK
+            );
+        } catch (Exception e) {
+            return new ResponseEntity<>(
+                new ApiResponse<>(false, "Failed to retrieve categories: " + e.getMessage(), null),
+                HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
+    }
+
+
+    // create category
+    @PostMapping("/category/create")
+    public ResponseEntity<ApiResponse<ProductCategory>> createCategory(@RequestBody @Valid ProductCategoryRequest bodyRequest) {
+        try {
+            ProductCategory category = productCategoryService.createCategory(bodyRequest.getName());
+
+            return new ResponseEntity<>(
+                new ApiResponse<>(true, "Category created successfully", category),
+                HttpStatus.OK
+            );
+        } catch (Exception e) {
+            return new ResponseEntity<>(
+                new ApiResponse<>(false, "Failed to create category: " + e.getMessage(), null),
+                HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
+    }
+    
+
+    // update category
+    @PutMapping("/category/update/{categoryId}")
+    public ResponseEntity<ApiResponse<ProductCategory>> updateCategory(@PathVariable Long categoryId, @RequestBody @Valid ProductCategoryRequest bodyRequest) {
+        try {
+            ProductCategory category = productCategoryService.updateCategory(categoryId, bodyRequest.getName());
+
+            if (category == null) {
+                return new ResponseEntity<>(
+                    new ApiResponse<>(false, "Category not found", null),
+                    HttpStatus.NOT_FOUND
+                );
+            }
+
+            return new ResponseEntity<>(
+                new ApiResponse<>(true, "Category updated successfully", category),
+                HttpStatus.OK
+            );
+        } catch (Exception e) {
+            return new ResponseEntity<>(
+                new ApiResponse<>(false, "Failed to update category: " + e.getMessage(), null),
+                HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
+    }
+
+    // get product by category id
+    @GetMapping("/category/{categoryId}")
+    public ResponseEntity<ApiResponse<List<Product>>> getProductsByCategoryId(@PathVariable Long categoryId) {
+        try {
+            List<Product> products = productService.getProductsByCategoryId(categoryId);
+
+            if (products.isEmpty()) {
+                return new ResponseEntity<>(
+                    new ApiResponse<>(false, "No products found for category ID: " + categoryId, null),
+                    HttpStatus.NOT_FOUND
+                );
+            }
+            return new ResponseEntity<>(
+                new ApiResponse<>(true, "Products retrieved successfully", products),
+                HttpStatus.OK
+            );
+        } catch (Exception e) {
+            return new ResponseEntity<>(
+                new ApiResponse<>(false, "Failed to retrieve products: " + e.getMessage(), null),
+                HttpStatus.INTERNAL_SERVER_ERROR
+            );
         }
     }
 
@@ -220,5 +315,17 @@ class ProductPromotionAdminResponse {
 
     public java.time.LocalDateTime getCreatedAt() {
         return createdAt;
+    }
+}
+
+class ProductCategoryRequest {
+    private String name;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

@@ -1,666 +1,777 @@
 {
-  "info": {
-    "_postman_id": "9ad8207e-10f5-4fc6-a950-6efdd0b6607f",
-    "name": "API Collection",
-    "description": "# 🚀 Get started here\n\nThis template guides you through CRUD operations (GET, POST, PUT, DELETE), variables, and tests.\n\n## 🔖 **How to use this template**\n\n#### **Step 1: Send requests**\n\nRESTful APIs allow you to perform CRUD operations using the POST, GET, PUT, and DELETE HTTP methods.\n\nThis collection contains each of these [request](https://learning.postman.com/docs/sending-requests/requests/) types. Open each request and click \"Send\" to see what happens.\n\n#### **Step 2: View responses**\n\nObserve the response tab for status code (200 OK), response time, and size.\n\n#### **Step 3: Send new Body data**\n\nUpdate or add new data in \"Body\" in the POST request. Typically, Body data is also used in PUT request.\n\n```\n{\n    \"name\": \"Add your name in the body\"\n}\n\n ```\n\n#### **Step 4: Update the variable**\n\nVariables enable you to store and reuse values in Postman. We have created a [variable](https://learning.postman.com/docs/sending-requests/variables/) called `base_url` with the sample request [https://postman-api-learner.glitch.me](https://postman-api-learner.glitch.me). Replace it with your API endpoint to customize this collection.\n\n#### **Step 5: Add tests in the \"Scripts\" tab**\n\nAdding tests to your requests can help you confirm that your API is working as expected. You can write test scripts in JavaScript and view the output in the \"Test Results\" tab.\n\n<img src=\"https://content.pstmn.io/fa30ea0a-373d-4545-a668-e7b283cca343/aW1hZ2UucG5n\" alt=\"\" height=\"1530\" width=\"2162\">\n\n## 💪 Pro tips\n\n- Use folders to group related requests and organize the collection.\n    \n- Add more [scripts](https://learning.postman.com/docs/writing-scripts/intro-to-scripts/) to verify if the API works as expected and execute workflows.\n    \n\n## 💡Related templates\n\n[API testing basics](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=e9a37a28-055b-49cd-8c7e-97494a21eb54&sourceTemplateId=ddb19591-3097-41cf-82af-c84273e56719)  \n[API documentation](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=e9c28f47-1253-44af-a2f3-20dce4da1f18&sourceTemplateId=ddb19591-3097-41cf-82af-c84273e56719)  \n[Authorization methods](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=31a9a6ed-4cdf-4ced-984c-d12c9aec1c27&sourceTemplateId=ddb19591-3097-41cf-82af-c84273e56719)",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "_exporter_id": "25390866"
-  },
-  "item": [
-    {
-      "name": "Regular User",
-      "item": [
-        {
-          "name": "User",
-          "item": [
-            {
-              "name": "Get Session",
-              "protocolProfileBehavior": {
-                "disableBodyPruning": true
-              },
-              "request": {
-                "auth": {
-                  "type": "bearer",
-                  "bearer": [
-                    {
-                      "key": "token",
-                      "value": "{{Session}}",
-                      "type": "string"
-                    }
-                  ]
-                },
-                "method": "GET",
-                "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n    \"name\": \"mirzadasd\"\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
-                "url": {
-                  "raw": "{{BaseUrl}}/user/get_session",
-                  "host": [
-                    "{{BaseUrl}}"
-                  ],
-                  "path": [
-                    "user",
-                    "get_session"
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "Create Session",
-              "request": {
-                "method": "POST",
-                "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n    \"name\": \"tes\"\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
-                "url": {
-                  "raw": "{{BaseUrl}}/user/create_session",
-                  "host": [
-                    "{{BaseUrl}}"
-                  ],
-                  "path": [
-                    "user",
-                    "create_session"
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "Get User Preferences",
-              "protocolProfileBehavior": {
-                "disableBodyPruning": true
-              },
-              "request": {
-                "auth": {
-                  "type": "bearer",
-                  "bearer": [
-                    {
-                      "key": "token",
-                      "value": "{{Session}}",
-                      "type": "string"
-                    }
-                  ]
-                },
-                "method": "GET",
-                "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n    \"name\": \"mirzadasd\"\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
-                "url": {
-                  "raw": "{{BaseUrl}}/user/preference/detail",
-                  "host": [
-                    "{{BaseUrl}}"
-                  ],
-                  "path": [
-                    "user",
-                    "preference",
-                    "detail"
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "Set Preference",
-              "request": {
-                "auth": {
-                  "type": "bearer",
-                  "bearer": [
-                    {
-                      "key": "token",
-                      "value": "{{Session}}",
-                      "type": "string"
-                    }
-                  ]
-                },
-                "method": "POST",
-                "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n    \"categoryIds\": [] // set [] or with value [1,4]\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
-                "url": {
-                  "raw": "{{BaseUrl}}/user/preference/update",
-                  "host": [
-                    "{{BaseUrl}}"
-                  ],
-                  "path": [
-                    "user",
-                    "preference",
-                    "update"
-                  ]
-                }
-              },
-              "response": []
-            }
-          ]
-        },
-        {
-          "name": "Product",
-          "item": [
-            {
-              "name": "Get All Product",
-              "request": {
-                "auth": {
-                  "type": "bearer",
-                  "bearer": [
-                    {
-                      "key": "token",
-                      "value": "{{Session}}",
-                      "type": "string"
-                    }
-                  ]
-                },
-                "method": "GET",
-                "header": [],
-                "url": {
-                  "raw": "{{BaseUrl}}/product/list",
-                  "host": [
-                    "{{BaseUrl}}"
-                  ],
-                  "path": [
-                    "product",
-                    "list"
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "Get Detail Product",
-              "request": {
-                "auth": {
-                  "type": "bearer",
-                  "bearer": [
-                    {
-                      "key": "token",
-                      "value": "{{Session}}",
-                      "type": "string"
-                    }
-                  ]
-                },
-                "method": "GET",
-                "header": [],
-                "url": {
-                  "raw": "{{BaseUrl}}/product/detail/1",
-                  "host": [
-                    "{{BaseUrl}}"
-                  ],
-                  "path": [
-                    "product",
-                    "detail",
-                    "1"
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "Get All Product Categories",
-              "request": {
-                "auth": {
-                  "type": "bearer",
-                  "bearer": [
-                    {
-                      "key": "token",
-                      "value": "{{Session}}",
-                      "type": "string"
-                    }
-                  ]
-                },
-                "method": "GET",
-                "header": [],
-                "url": {
-                  "raw": "{{BaseUrl}}/product/category/list",
-                  "host": [
-                    "{{BaseUrl}}"
-                  ],
-                  "path": [
-                    "product",
-                    "category",
-                    "list"
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "Get Product By Category Id",
-              "request": {
-                "auth": {
-                  "type": "bearer",
-                  "bearer": [
-                    {
-                      "key": "token",
-                      "value": "{{Session}}",
-                      "type": "string"
-                    }
-                  ]
-                },
-                "method": "GET",
-                "header": [],
-                "url": {
-                  "raw": "{{BaseUrl}}/product/category/{1}",
-                  "host": [
-                    "{{BaseUrl}}"
-                  ],
-                  "path": [
-                    "product",
-                    "category",
-                    "{1}"
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "Get User Recomended Product",
-              "request": {
-                "auth": {
-                  "type": "bearer",
-                  "bearer": [
-                    {
-                      "key": "token",
-                      "value": "{{Session}}",
-                      "type": "string"
-                    }
-                  ]
-                },
-                "method": "GET",
-                "header": [],
-                "url": {
-                  "raw": "{{BaseUrl}}/product/recomendation",
-                  "host": [
-                    "{{BaseUrl}}"
-                  ],
-                  "path": [
-                    "product",
-                    "recomendation"
-                  ]
-                }
-              },
-              "response": []
-            }
-          ]
-        },
-        {
-          "name": "Promotion",
-          "item": [
-            {
-              "name": "Get User Product Promotion (Subscribed) Copy",
-              "request": {
-                "method": "GET",
-                "header": [],
-                "url": {
-                  "raw": "{{BaseUrl}}/promotion/list",
-                  "host": [
-                    "{{BaseUrl}}"
-                  ],
-                  "path": [
-                    "promotion",
-                    "list"
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "Listen Event Promotion",
-              "request": {
-                "method": "GET",
-                "header": [],
-                "url": {
-                  "raw": "{{BaseUrl}}/promotion/stream?sessionKey=cc293389-4d8b-4f60-9880-9676f0f5808d",
-                  "host": [
-                    "{{BaseUrl}}"
-                  ],
-                  "path": [
-                    "promotion",
-                    "stream"
-                  ],
-                  "query": [
-                    {
-                      "key": "sessionKey",
-                      "value": "cc293389-4d8b-4f60-9880-9676f0f5808d"
-                    }
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "Subscribe Product Promotion",
-              "request": {
-                "auth": {
-                  "type": "bearer",
-                  "bearer": [
-                    {
-                      "key": "token",
-                      "value": "{{Session}}",
-                      "type": "string"
-                    }
-                  ]
-                },
-                "method": "PUT",
-                "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\r\n    \"productId\" : 1\r\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
-                "url": {
-                  "raw": "{{BaseUrl}}/promotion/subscribe",
-                  "host": [
-                    "{{BaseUrl}}"
-                  ],
-                  "path": [
-                    "promotion",
-                    "subscribe"
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "Unsubscribe Product Promotion",
-              "request": {
-                "auth": {
-                  "type": "bearer",
-                  "bearer": [
-                    {
-                      "key": "token",
-                      "value": "{{Session}}",
-                      "type": "string"
-                    }
-                  ]
-                },
-                "method": "PUT",
-                "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\r\n    \"productId\" : 1\r\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
-                "url": {
-                  "raw": "{{BaseUrl}}/promotion/unsubscribe",
-                  "host": [
-                    "{{BaseUrl}}"
-                  ],
-                  "path": [
-                    "promotion",
-                    "unsubscribe"
-                  ]
-                }
-              },
-              "response": []
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "name": "Admin",
-      "item": [
-        {
-          "name": "Promotion",
-          "item": [
-            {
-              "name": "Get All Promotion",
-              "request": {
-                "method": "GET",
-                "header": [],
-                "url": {
-                  "raw": "{{BaseUrl}}/admin/promotion/list",
-                  "host": [
-                    "{{BaseUrl}}"
-                  ],
-                  "path": [
-                    "admin",
-                    "promotion",
-                    "list"
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "Create Promotion",
-              "request": {
-                "method": "POST",
-                "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\r\n    \"productId\" : 1,\r\n    \"promotionName\" : \"Pocong\",\r\n    \"price\": 400000,\r\n    \"description\": \"pocongan harga\"\r\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
-                "url": {
-                  "raw": "{{BaseUrl}}/admin/promotion/create",
-                  "host": [
-                    "{{BaseUrl}}"
-                  ],
-                  "path": [
-                    "admin",
-                    "promotion",
-                    "create"
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "Update Promotion (Active/Inactive)",
-              "request": {
-                "method": "PUT",
-                "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\r\n    \"promotionId\": 1,\r\n    \"isActive\": true\r\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
-                "url": {
-                  "raw": "{{BaseUrl}}/admin/promotion/update",
-                  "host": [
-                    "{{BaseUrl}}"
-                  ],
-                  "path": [
-                    "admin",
-                    "promotion",
-                    "update"
-                  ]
-                }
-              },
-              "response": []
-            }
-          ]
-        },
-        {
-          "name": "Product",
-          "item": [
-            {
-              "name": "Create product",
-              "request": {
-                "method": "POST",
-                "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\r\n    \"name\": \"Beras\",\r\n    \"price\": 2000123,\r\n    \"categoryId\": 2,\r\n    \"imageUrl\": \"\",\r\n    \"description\": \"buat makan\"\r\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
-                "url": {
-                  "raw": "{{BaseUrl}}/admin/product/create",
-                  "host": [
-                    "{{BaseUrl}}"
-                  ],
-                  "path": [
-                    "admin",
-                    "product",
-                    "create"
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "Get All Product",
-              "protocolProfileBehavior": {
-                "disableBodyPruning": true
-              },
-              "request": {
-                "method": "GET",
-                "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\r\n    \"productId\" : 1,\r\n    \"promotionName\" : \"Pocong\",\r\n    \"price\": 400000,\r\n    \"description\": \"pocongan harga\"\r\n}"
-                },
-                "url": {
-                  "raw": "{{BaseUrl}}/admin/product/list",
-                  "host": [
-                    "{{BaseUrl}}"
-                  ],
-                  "path": [
-                    "admin",
-                    "product",
-                    "list"
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "Get Detail Product",
-              "protocolProfileBehavior": {
-                "disableBodyPruning": true
-              },
-              "request": {
-                "method": "GET",
-                "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\r\n    \"productId\" : 1,\r\n    \"promotionName\" : \"Pocong\",\r\n    \"price\": 400000,\r\n    \"description\": \"pocongan harga\"\r\n}"
-                },
-                "url": {
-                  "raw": "{{BaseUrl}}/admin/product/detail/1",
-                  "host": [
-                    "{{BaseUrl}}"
-                  ],
-                  "path": [
-                    "admin",
-                    "product",
-                    "detail",
-                    "1"
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "Update Product",
-              "request": {
-                "method": "PUT",
-                "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\r\n    \"name\": \"Beras\",\r\n    \"price\": 2000123,\r\n    \"categoryId\": 2,\r\n    \"imageUrl\": \"\",\r\n    \"description\": \"buat makan\"\r\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
-                "url": {
-                  "raw": "{{BaseUrl}}/admin/product/detail/",
-                  "host": [
-                    "{{BaseUrl}}"
-                  ],
-                  "path": [
-                    "admin",
-                    "product",
-                    "detail",
-                    ""
-                  ]
-                }
-              },
-              "response": []
-            }
-          ]
-        }
-      ]
-    }
-  ],
-  "event": [
-    {
-      "listen": "prerequest",
-      "script": {
-        "type": "text/javascript",
-        "exec": [
-          ""
-        ]
-      }
-    },
-    {
-      "listen": "test",
-      "script": {
-        "type": "text/javascript",
-        "exec": [
-          ""
-        ]
-      }
-    }
-  ],
-  "variable": [
-    {
-      "key": "id",
-      "value": "1"
-    },
-    {
-      "key": "base_url",
-      "value": "https://template.postman-echo.com"
-    }
-  ]
+	"info": {
+		"_postman_id": "06144e91-cc9d-4679-be17-f09466d51d97",
+		"name": "API Collection",
+		"description": "# 🚀 Get started here\n\nThis template guides you through CRUD operations (GET, POST, PUT, DELETE), variables, and tests.\n\n## 🔖 **How to use this template**\n\n#### **Step 1: Send requests**\n\nRESTful APIs allow you to perform CRUD operations using the POST, GET, PUT, and DELETE HTTP methods.\n\nThis collection contains each of these [request](https://learning.postman.com/docs/sending-requests/requests/) types. Open each request and click \"Send\" to see what happens.\n\n#### **Step 2: View responses**\n\nObserve the response tab for status code (200 OK), response time, and size.\n\n#### **Step 3: Send new Body data**\n\nUpdate or add new data in \"Body\" in the POST request. Typically, Body data is also used in PUT request.\n\n```\n{\n    \"name\": \"Add your name in the body\"\n}\n\n ```\n\n#### **Step 4: Update the variable**\n\nVariables enable you to store and reuse values in Postman. We have created a [variable](https://learning.postman.com/docs/sending-requests/variables/) called `base_url` with the sample request [https://postman-api-learner.glitch.me](https://postman-api-learner.glitch.me). Replace it with your API endpoint to customize this collection.\n\n#### **Step 5: Add tests in the \"Scripts\" tab**\n\nAdding tests to your requests can help you confirm that your API is working as expected. You can write test scripts in JavaScript and view the output in the \"Test Results\" tab.\n\n<img src=\"https://content.pstmn.io/fa30ea0a-373d-4545-a668-e7b283cca343/aW1hZ2UucG5n\" alt=\"\" height=\"1530\" width=\"2162\">\n\n## 💪 Pro tips\n\n- Use folders to group related requests and organize the collection.\n    \n- Add more [scripts](https://learning.postman.com/docs/writing-scripts/intro-to-scripts/) to verify if the API works as expected and execute workflows.\n    \n\n## 💡Related templates\n\n[API testing basics](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=e9a37a28-055b-49cd-8c7e-97494a21eb54&sourceTemplateId=ddb19591-3097-41cf-82af-c84273e56719)  \n[API documentation](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=e9c28f47-1253-44af-a2f3-20dce4da1f18&sourceTemplateId=ddb19591-3097-41cf-82af-c84273e56719)  \n[Authorization methods](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=31a9a6ed-4cdf-4ced-984c-d12c9aec1c27&sourceTemplateId=ddb19591-3097-41cf-82af-c84273e56719)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "25390866"
+	},
+	"item": [
+		{
+			"name": "Regular User",
+			"item": [
+				{
+					"name": "User",
+					"item": [
+						{
+							"name": "Get Session",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Session}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"mirzadasd\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BaseUrl}}/user/get_session",
+									"host": [
+										"{{BaseUrl}}"
+									],
+									"path": [
+										"user",
+										"get_session"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Session",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"tes\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BaseUrl}}/user/create_session",
+									"host": [
+										"{{BaseUrl}}"
+									],
+									"path": [
+										"user",
+										"create_session"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get User Preferences",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Session}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"mirzadasd\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BaseUrl}}/user/preference/detail",
+									"host": [
+										"{{BaseUrl}}"
+									],
+									"path": [
+										"user",
+										"preference",
+										"detail"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Set Preference",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Session}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"categoryIds\": [] // set [] or with value [1,4]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BaseUrl}}/user/preference/update",
+									"host": [
+										"{{BaseUrl}}"
+									],
+									"path": [
+										"user",
+										"preference",
+										"update"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Product",
+					"item": [
+						{
+							"name": "Get All Product",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Session}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BaseUrl}}/product/list",
+									"host": [
+										"{{BaseUrl}}"
+									],
+									"path": [
+										"product",
+										"list"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Detail Product",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Session}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BaseUrl}}/product/detail/1",
+									"host": [
+										"{{BaseUrl}}"
+									],
+									"path": [
+										"product",
+										"detail",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get All Product Categories",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Session}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BaseUrl}}/product/category/list",
+									"host": [
+										"{{BaseUrl}}"
+									],
+									"path": [
+										"product",
+										"category",
+										"list"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Product By Category Id",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Session}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BaseUrl}}/product/category/{1}",
+									"host": [
+										"{{BaseUrl}}"
+									],
+									"path": [
+										"product",
+										"category",
+										"{1}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get User Recomended Product",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Session}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BaseUrl}}/product/recomendation",
+									"host": [
+										"{{BaseUrl}}"
+									],
+									"path": [
+										"product",
+										"recomendation"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Promotion",
+					"item": [
+						{
+							"name": "Get User Product Promotion (Subscribed) Copy",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BaseUrl}}/promotion/list",
+									"host": [
+										"{{BaseUrl}}"
+									],
+									"path": [
+										"promotion",
+										"list"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Listen Event Promotion",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BaseUrl}}/promotion/stream?sessionKey=cc293389-4d8b-4f60-9880-9676f0f5808d",
+									"host": [
+										"{{BaseUrl}}"
+									],
+									"path": [
+										"promotion",
+										"stream"
+									],
+									"query": [
+										{
+											"key": "sessionKey",
+											"value": "cc293389-4d8b-4f60-9880-9676f0f5808d"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Subscribe Product Promotion",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Session}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"productId\" : 1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BaseUrl}}/promotion/subscribe",
+									"host": [
+										"{{BaseUrl}}"
+									],
+									"path": [
+										"promotion",
+										"subscribe"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Unsubscribe Product Promotion",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Session}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"productId\" : 1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BaseUrl}}/promotion/unsubscribe",
+									"host": [
+										"{{BaseUrl}}"
+									],
+									"path": [
+										"promotion",
+										"unsubscribe"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Admin",
+			"item": [
+				{
+					"name": "Promotion",
+					"item": [
+						{
+							"name": "Get All Promotion",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BaseUrl}}/admin/promotion/list",
+									"host": [
+										"{{BaseUrl}}"
+									],
+									"path": [
+										"admin",
+										"promotion",
+										"list"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Promotion",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"productId\" : 1,\r\n    \"promotionName\" : \"Pocong\",\r\n    \"price\": 400000,\r\n    \"description\": \"pocongan harga\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BaseUrl}}/admin/promotion/create",
+									"host": [
+										"{{BaseUrl}}"
+									],
+									"path": [
+										"admin",
+										"promotion",
+										"create"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Promotion (Active/Inactive)",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"promotionId\": 1,\r\n    \"isActive\": true\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BaseUrl}}/admin/promotion/update",
+									"host": [
+										"{{BaseUrl}}"
+									],
+									"path": [
+										"admin",
+										"promotion",
+										"update"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Product",
+					"item": [
+						{
+							"name": "Create product",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Beras\",\r\n    \"price\": 2000123,\r\n    \"categoryId\": 2,\r\n    \"imageUrl\": \"\",\r\n    \"description\": \"buat makan\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BaseUrl}}/admin/product/create",
+									"host": [
+										"{{BaseUrl}}"
+									],
+									"path": [
+										"admin",
+										"product",
+										"create"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get All Product",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"productId\" : 1,\r\n    \"promotionName\" : \"Pocong\",\r\n    \"price\": 400000,\r\n    \"description\": \"pocongan harga\"\r\n}"
+								},
+								"url": {
+									"raw": "{{BaseUrl}}/admin/product/list",
+									"host": [
+										"{{BaseUrl}}"
+									],
+									"path": [
+										"admin",
+										"product",
+										"list"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Product By category",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BaseUrl}}/admin/product/category/1",
+									"host": [
+										"{{BaseUrl}}"
+									],
+									"path": [
+										"admin",
+										"product",
+										"category",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Detail Product",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"productId\" : 1,\r\n    \"promotionName\" : \"Pocong\",\r\n    \"price\": 400000,\r\n    \"description\": \"pocongan harga\"\r\n}"
+								},
+								"url": {
+									"raw": "{{BaseUrl}}/admin/product/detail/1",
+									"host": [
+										"{{BaseUrl}}"
+									],
+									"path": [
+										"admin",
+										"product",
+										"detail",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Product",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Beras\",\r\n    \"price\": 2000123,\r\n    \"categoryId\": 2,\r\n    \"imageUrl\": \"\",\r\n    \"description\": \"buat makan\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BaseUrl}}/admin/product/detail/",
+									"host": [
+										"{{BaseUrl}}"
+									],
+									"path": [
+										"admin",
+										"product",
+										"detail",
+										""
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Category",
+					"item": [
+						{
+							"name": "Get All Product Category",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"productId\" : 1,\r\n    \"promotionName\" : \"Pocong\",\r\n    \"price\": 400000,\r\n    \"description\": \"pocongan harga\"\r\n}"
+								},
+								"url": {
+									"raw": "{{BaseUrl}}/admin/product/category/list",
+									"host": [
+										"{{BaseUrl}}"
+									],
+									"path": [
+										"admin",
+										"product",
+										"category",
+										"list"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Category",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"CD / Media\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BaseUrl}}/admin/product/category/create",
+									"host": [
+										"{{BaseUrl}}"
+									],
+									"path": [
+										"admin",
+										"product",
+										"category",
+										"create"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Category",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"CD bekas\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BaseUrl}}/admin/product/category/update/7",
+									"host": [
+										"{{BaseUrl}}"
+									],
+									"path": [
+										"admin",
+										"product",
+										"category",
+										"update",
+										"7"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "id",
+			"value": "1"
+		},
+		{
+			"key": "base_url",
+			"value": "https://template.postman-echo.com"
+		}
+	]
 }
