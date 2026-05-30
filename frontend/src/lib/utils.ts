@@ -1,4 +1,5 @@
-export const formatPrice = (price: number) =>
+import type { Product } from "@/types/interface";
+export const formatCurrency = (price: number) =>
   new Intl.NumberFormat("id-ID", {
     style: "currency",
     currency: "IDR",
@@ -11,3 +12,6 @@ export const discount = (orig: number, price: number) =>
 export const API_URL = import.meta.env.DEV
   ? "/api"
   : import.meta.env.VITE_API_URL;
+
+export const getProductCategoryName = (category: Product["category"]) =>
+  typeof category === "string" ? category : category.name;

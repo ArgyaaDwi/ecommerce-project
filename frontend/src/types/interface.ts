@@ -1,6 +1,7 @@
 export interface ProductCategory {
   id: number;
   name: string;
+  createdAt: string;
 }
 
 export interface Product {
@@ -66,3 +67,14 @@ export type CategoryFilterItem = {
   name: string;
   count: number;
 };
+
+export interface PromotionPayload {
+  type: string;
+  promotionId: number;
+  productId: number;
+  promotionName: string;
+  promotionPrice: number;
+  description: string;
+  createdAt: string;
+  productName?: string;
+}

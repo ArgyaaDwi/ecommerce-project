@@ -1,7 +1,10 @@
 export const dummyCategoryProduct = [
-  { category: "Barang Elektronik", jumlah: 132 },
-  { category: "Pakaian", jumlah: 98 },
-  { category: "Peralatan Rumah Tangga", jumlah: 76 },
-  { category: "Buku", jumlah: 54 },
-  { category: "Mainan", jumlah: 43 },
+  { category: "Elektronics", jumlah: 5 },
+  { category: "Books", jumlah: 6 },
+  { category: "Home & Garden", jumlah: 6 },
+  { category: "Sports", jumlah: 3 },
+  { category: "Beauty", jumlah: 2 },
+  { category: "Automotive", jumlah: 1 },
+  { category: "Fashion", jumlah: 8 },
+  { category: "Food & Drink", jumlah: 1 },
 ];

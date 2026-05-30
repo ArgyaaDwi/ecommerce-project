@@ -26,21 +26,21 @@ export default function AdminDashboardPage() {
         <Card
           icon={<Package color="gray" />}
           text="Total Kategori Produk"
-          count="12"
+          count="8"
           color="#63C2EB"
           url="/admin/lecturer"
         />
         <Card
           icon={<Handbag color="gray" />}
           text="Total Produk"
-          count="39"
+          count="30"
           color="#8CC0EB"
           url="/admin/publisher"
         />
         <Card
           icon={<PartyPopper color="gray" />}
           text="Total Promo Aktif"
-          count="8"
+          count="7"
           color="#427AB5"
           url="/admin/proposal"
         />
