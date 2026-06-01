@@ -18,6 +18,7 @@ import {
   RefreshCcw,
   Trash2,
 } from "lucide-react";
+import Swal from "sweetalert2";
 import Breadcrumb from "@/components/fragment/Breadcrumb";
 import PromoStatusModal from "@/components/fragment/PromoStatusModal";
 import { formatFullDateTime } from "@/helper/formatDate";
@@ -73,9 +74,56 @@ export default function PromoPage() {
     fetchPromotions();
   }, [fetchPromotions]);
 
-  const handleDelete = useCallback((id: number) => {
-    console.log(`Delete promo ID: ${id}`);
-  }, []);
+  const handleDelete = useCallback(
+    async (id: number) => {
+      const result = await Swal.fire({
+        icon: "warning",
+        title: "Hapus promo ini?",
+        text: "Promo yang dihapus tidak bisa dikembalikan.",
+        showCancelButton: true,
+        confirmButtonText: "Ya, hapus",
+        cancelButtonText: "Batal",
+        confirmButtonColor: "#dc2626",
+        cancelButtonColor: "#6b7280",
+      });
+
+      if (!result.isConfirmed) return;
+
+      try {
+        const response = await fetch(
+          `${API_URL}/admin/promotion/delete/${id}`,
+          {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          },
+        );
+
+        if (!response.ok) {
+          throw new Error(`Failed to delete promotion: ${response.status}`);
+        }
+
+        await Swal.fire({
+          icon: "success",
+          title: "Berhasil",
+          text: "Promo berhasil dihapus.",
+          confirmButtonColor: "#16a34a",
+        });
+
+        fetchPromotions();
+      } catch (error) {
+        console.error(error);
+        await Swal.fire({
+          icon: "error",
+          title: "Gagal",
+          text: "Promo gagal dihapus.",
+          confirmButtonColor: "#dc2626",
+        });
+      }
+    },
+    [fetchPromotions],
+  );
 
   const openStatusModal = useCallback((promotion: PromotionApiItem) => {
     setStatusModalPromotion(promotion);
